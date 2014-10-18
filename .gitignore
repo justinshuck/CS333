@@ -1,0 +1,9 @@
+.ssh/*
+.bash_history
+.bash_profile
+.bashrc
+.bashrc.swp
+.gitconfig
+.inputrc
+.minttyrc
+.profile
