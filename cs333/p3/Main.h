@@ -11,4 +11,20 @@ header Main
     customer(timeToWait: int)
     wait(timeToWait: int)
 
+
+class GameParlor
+    superclass Object
+    fields
+      monitoringLock: Mutex
+      firstInLine: Condition
+      restOfLine: Condition
+      numWaitingGroups: int
+      numDiceLeft: int
+    methods
+      Init()
+      print(printString: String, num: int)
+      getDice(diceNeeded: int)
+      releaseDice(diceReturned: int)
+  endClass
+
 endHeader
