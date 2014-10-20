@@ -1,0 +1,101 @@
+Script started on Sun, Oct 19, 2014 10:20:34 PM
+[?1034h]0;~/cs333/p3
+[32mjustin@Justin [33m~/cs333/p3[0m
+$ make
+kpl Main -unsafe
+asm Main.s
+lddd System.o List.o Thread.o Switch.o Synch.o Main.o Runtime.o -o os
+]0;~/cs333/p3
+[32mjustin@Justin [33m~/cs333/p3[0m
+$ blitz -g os
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+-- PART 1: BEGIN TESTING -- 
+New Barber: Barber #1
+
+New Customer Has Arrived: Customer #1
+New Customer Has Arrived: Customer #3
+New Customer Has Arrived: Customer #5
+-------------> Barber #1 is cutting_hair! 
+------------->Barber #1 finished cutting_hair! 
+-------------> Barber #1 is cutting_hair! 
+New Customer Has Arrived: Customer #2
+New Customer Has Arrived: Customer #4
+----> Customer #1 is getting_haircut! 
+----> Customer #3 is getting_haircut! 
+New Customer Has Arrived: Customer #6
+New Customer Has Arrived: Customer #7
+New Customer Has Arrived: Customer #8
+--> SHOP FULL: Customer #8 will now leave the store.
+
+New Customer Has Arrived: Customer #10
+--> SHOP FULL: Customer #10 will now leave the store.
+
+New Customer Has Arrived: Customer #12
+--> SHOP FULL: Customer #12 will now leave the store.
+
+------------->Barber #1 finished cutting_hair! 
+-------------> Barber #1 is cutting_hair! 
+------------->Barber #1 finished cutting_hair! 
+New Customer Has Arrived: Customer #9
+New Customer Has Arrived: Customer #11
+New Customer Has Arrived: Customer #13
+New Customer Has Arrived: Customer #15
+New Customer Has Arrived: Customer #16
+New Customer Has Arrived: Customer #18
+----> Customer #5 is getting_haircut! 
+--> SHOP FULL: Customer #11 will now leave the store.
+
+New Customer Has Arrived: Customer #14
+New Customer Has Arrived: Customer #20
+New Customer Has Arrived: Customer #17
+--> SHOP FULL: Customer #13 will now leave the store.
+
+New Customer Has Arrived: Customer #19
+--> SHOP FULL: Customer #16 will now leave the store.
+
+--> SHOP FULL: Customer #15 will now leave the store.
+
+-------------> Barber #1 is cutting_hair! 
+------------->Barber #1 finished cutting_hair! 
+--> SHOP FULL: Customer #18 will now leave the store.
+
+----> Customer #2 is getting_haircut! 
+--> SHOP FULL: Customer #20 will now leave the store.
+
+--> SHOP FULL: Customer #17 will now leave the store.
+
+--> SHOP FULL: Customer #19 will now leave the store.
+
+----> Customer #4 is getting_haircut! 
+-------------> Barber #1 is cutting_hair! 
+------------->Barber #1 finished cutting_hair! 
+----> Customer #7 is getting_haircut! 
+-------------> Barber #1 is cutting_hair! 
+------------->Barber #1 finished cutting_hair! 
+-------------> Barber #1 is cutting_hair! 
+----> Customer #6 is getting_haircut! 
+------------->Barber #1 finished cutting_hair! 
+-------------> Barber #1 is cutting_hair! 
+----> Customer #9 is getting_haircut! 
+------------->Barber #1 finished cutting_hair! 
+-------------> Barber #1 is cutting_hair! 
+----> Customer #14 is getting_haircut! 
+------------->Barber #1 finished cutting_hair! 
+
+*****  A 'wait' instruction was executed and no more interrupts are scheduled... halting emulation!  *****
+
+Done!  The next instruction to execute will be:
+000EC8: 09000000       ret     
+Number of Disk Reads    = 0
+Number of Disk Writes   = 0
+Instructions Executed   = 289852
+Time Spent Sleeping     = 0
+    Total Elapsed Time  = 289852
+]0;~/cs333/p3
+[32mjustin@Justin [33m~/cs333/p3[0m
+$ exit
+exit
+
+Script done on Sun, Oct 19, 2014 10:20:44 PM
