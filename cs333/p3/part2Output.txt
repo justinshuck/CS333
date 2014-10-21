@@ -1,5 +1,4 @@
-Script started on Sun, Oct 19, 2014  1:02:19 PM
-[?1034h]0;~/cs333/p3
+Script started on Sun, Oct 19, 2014 10:20:34 PM
 [32mjustin@Justin [33m~/cs333/p3[0m
 $ make
 kpl Main -unsafe
@@ -7,370 +6,370 @@ asm Main.s
 lddd System.o List.o Thread.o Switch.o Synch.o Main.o Runtime.o -o os
 ]0;~/cs333/p3
 [32mjustin@Justin [33m~/cs333/p3[0m
-$ blitz -g os
+$ blitz -h[Kg os
 Beginning execution...
 ====================  KPL PROGRAM STARTING  ====================
 Initializing Thread Scheduler...
 -- PART 1: BEGIN TESTING -- 
-THREAD[A - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon requests 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[A - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+A - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[B - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 1 dice left...
+B - Backgammon requests 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[D - Risk]  NEEDS  using 5 dice! 
- ---Now there are 1 dice left...
+D - Risk requests 5
+-------------------------------- Number of dice now available = 1
 
-THREAD[C - Risk]  NEEDS  using 5 dice! 
- ---Now there are 1 dice left...
+C - Risk requests 5
+-------------------------------- Number of dice now available = 1
 
-THREAD[E - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 1 dice left...
+E - Monopoly requests 2
+-------------------------------- Number of dice now available = 1
 
-THREAD[G - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 1 dice left...
+G - Pictionary requests 1
+-------------------------------- Number of dice now available = 1
 
-THREAD[H - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 1 dice left...
+H - Pictionary requests 1
+-------------------------------- Number of dice now available = 1
 
-THREAD[F - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 1 dice left...
+F - Monopoly requests 2
+-------------------------------- Number of dice now available = 1
 
-THREAD[A - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[A - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon requests 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[B - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+B - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[B - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+B - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[B - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 5 dice left...
+B - Backgammon requests 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[D - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+D - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[D - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+D - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[D - Risk]  NEEDS  using 5 dice! 
- ---Now there are 5 dice left...
+D - Risk requests 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[C - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+C - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[C - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+C - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[E - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[C - Risk]  NEEDS  using 5 dice! 
- ---Now there are 3 dice left...
+C - Risk requests 5
+-------------------------------- Number of dice now available = 3
 
-THREAD[G - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 1 dice left...
+H - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 1
 
-THREAD[E - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[E - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly requests 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 1 dice left...
+F - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 1
 
-THREAD[G - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[G - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary requests 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[H - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary requests 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 5 dice left...
+F - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 5
 
-THREAD[F - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 5 dice left...
+F - Monopoly requests 2
+-------------------------------- Number of dice now available = 5
 
-THREAD[A - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+A - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[A - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[A - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon requests 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[B - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+B - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[B - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+B - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[B - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 5 dice left...
+B - Backgammon requests 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[D - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+D - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[D - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+D - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[C - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+C - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[D - Risk]  NEEDS  using 5 dice! 
- ---Now there are 0 dice left...
+D - Risk requests 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[C - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+C - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[E - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[C - Risk]  NEEDS  using 5 dice! 
- ---Now there are 3 dice left...
+C - Risk requests 5
+-------------------------------- Number of dice now available = 3
 
-THREAD[G - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 1 dice left...
+H - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 1
 
-THREAD[E - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[E - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly requests 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 1 dice left...
+F - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 1
 
-THREAD[G - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[G - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary requests 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[H - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary requests 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 5 dice left...
+F - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 5
 
-THREAD[F - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 5 dice left...
+F - Monopoly requests 2
+-------------------------------- Number of dice now available = 5
 
-THREAD[A - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+A - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[A - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[A - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon requests 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[B - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+B - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[B - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+B - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[B - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 5 dice left...
+B - Backgammon requests 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[D - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+D - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[D - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+D - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[C - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+C - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[D - Risk]  NEEDS  using 5 dice! 
- ---Now there are 0 dice left...
+D - Risk requests 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[C - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+C - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[C - Risk]  NEEDS  using 5 dice! 
- ---Now there are 5 dice left...
+C - Risk requests 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[E - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[G - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 1 dice left...
+H - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 1
 
-THREAD[E - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[E - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly requests 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 1 dice left...
+F - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 1
 
-THREAD[G - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[G - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary requests 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[H - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary requests 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 5 dice left...
+F - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 5
 
-THREAD[F - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 5 dice left...
+F - Monopoly requests 2
+-------------------------------- Number of dice now available = 5
 
-THREAD[A - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+A - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[A - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[B - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+B - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[A - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 1 dice left...
+A - Backgammon requests 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[B - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+B - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[D - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+D - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[B - Backgammon]  NEEDS  using 4 dice! 
- ---Now there are 0 dice left...
+B - Backgammon requests 4
+-------------------------------- Number of dice now available = 0
 
-THREAD[D - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+D - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[C - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+C - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[D - Risk]  NEEDS  using 5 dice! 
- ---Now there are 0 dice left...
+D - Risk requests 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[C - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+C - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[C - Risk]  NEEDS  using 5 dice! 
- ---Now there are 5 dice left...
+C - Risk requests 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[E - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[G - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 1 dice left...
+H - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 1
 
-THREAD[E - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[E - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly requests 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 1 dice left...
+F - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 1
 
-THREAD[G - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[G - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary requests 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[H - Pictionary]  NEEDS  using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary requests 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 5 dice left...
+F - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 5
 
-THREAD[A - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+A - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[F - Monopoly]  NEEDS  using 2 dice! 
- ---Now there are 1 dice left...
+F - Monopoly requests 2
+-------------------------------- Number of dice now available = 1
 
-THREAD[A - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+A - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[B - Backgammon] PROCEEDS using 4 dice! 
- ---Now there are 1 dice left...
+B - Backgammon proceeds with 4
+-------------------------------- Number of dice now available = 1
 
-THREAD[B - Backgammon] DICE ADDED BACK using 4 dice! 
- ---Now there are 5 dice left...
+B - Backgammon releases and adds back 4
+-------------------------------- Number of dice now available = 5
 
-THREAD[D - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+D - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[D - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+D - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[C - Risk] PROCEEDS using 5 dice! 
- ---Now there are 0 dice left...
+C - Risk proceeds with 5
+-------------------------------- Number of dice now available = 0
 
-THREAD[C - Risk] DICE ADDED BACK using 5 dice! 
- ---Now there are 5 dice left...
+C - Risk releases and adds back 5
+-------------------------------- Number of dice now available = 5
 
-THREAD[E - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[G - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] PROCEEDS using 1 dice! 
- ---Now there are 1 dice left...
+H - Pictionary proceeds with 1
+-------------------------------- Number of dice now available = 1
 
-THREAD[E - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 3 dice left...
+E - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] PROCEEDS using 2 dice! 
- ---Now there are 1 dice left...
+F - Monopoly proceeds with 2
+-------------------------------- Number of dice now available = 1
 
-THREAD[G - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 2 dice left...
+G - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 2
 
-THREAD[H - Pictionary] DICE ADDED BACK using 1 dice! 
- ---Now there are 3 dice left...
+H - Pictionary releases and adds back 1
+-------------------------------- Number of dice now available = 3
 
-THREAD[F - Monopoly] DICE ADDED BACK using 2 dice! 
- ---Now there are 5 dice left...
+F - Monopoly releases and adds back 2
+-------------------------------- Number of dice now available = 5
 
 
 *****  A 'wait' instruction was executed and no more interrupts are scheduled... halting emulation!  *****
@@ -387,4 +386,4 @@ Time Spent Sleeping     = 0
 $ exit
 exit
 
-Script done on Sun, Oct 19, 2014  1:02:34 PM
+Script done on Sun, Oct 19, 2014 10:20:44 PM

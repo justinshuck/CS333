@@ -10,23 +10,24 @@ code Main
 
   function main ()
       InitializeScheduler()
-      -- testSleepingBarberPart1()   -- Tests part 1 of Proj 3
-      testGameParlorPart2()       -- Tests part 2 of Proj 3
+      testSleepingBarberPart1()   -- Tests part 1 of Proj 3
+      --testGameParlorPart2()       -- Tests part 2 of Proj 3
     endFunction
 
 
 
 const
   CHAIRS = 5
-  CUST_COUNT = 20
+  CUST_COUNT = 15
   BARB_COUNT = 1
 
 var
   customers: Semaphore = new Semaphore 
   barbers:   Semaphore = new Semaphore
-  mutexLock:     Semaphore = new Semaphore
+  mutexLock: Mutex = new Mutex
   waitCounter:   int = 0
   threads: array[50] of Thread = new array of Thread {50 of new Thread}
+  barbThreads: array[1] of Thread = new array of Thread { 1 of new Thread}
 
 -------------------------------------------------------------------------------
 -------------------------  PART1: Sleeping Barber  ----------------------------
@@ -39,8 +40,10 @@ function testSleepingBarberPart1()
 
     customers.Init(0)
     barbers.Init(0)
-    mutexLock.Init(1)
+    mutexLock.Init()
     total = BARB_COUNT+CUST_COUNT
+    barbThreads[0].Init("Barber")
+    barbThreads[0].Fork(barber,1)
 
     --------------------------------------------------------------
     -- COMMENTED CODE: Useful for testing large numbers of
@@ -65,38 +68,27 @@ function testSleepingBarberPart1()
     --  thread[index].Fork(customer, index * 50)
     --endFor
 
-    print("-- PART 1: BEGIN TESTING -- \n")
-    threads[0].Init("Barber #1")
-    threads[1].Init("Customer #1")
-    threads[2].Init("Customer #2")
-    threads[3].Init("Customer #3")
-    threads[4].Init("Customer #4")
-    threads[5].Init("Customer #5")
-    threads[6].Init("Customer #6")
-    threads[7].Init("Customer #7")
-    threads[8].Init("Customer #8")
-    threads[9].Init("Customer #9")
-    threads[10].Init("Customer #10")
-    threads[11].Init("Customer #11")
-    threads[12].Init("Customer #12")
-    threads[13].Init("Customer #13")
-    threads[14].Init("Customer #14")
-    threads[15].Init("Customer #15")
-    threads[16].Init("Customer #16")
-    threads[17].Init("Customer #17")
-    threads[18].Init("Customer #18")
-    threads[19].Init("Customer #19")
-    threads[20].Init("Customer #20")
-
-    threads[0].Fork(barber, 50)
-
-    -- Iterate over the customers
-    total = CUST_COUNT + BARB_COUNT - 1
-    for index = BARB_COUNT to 20
-      threads[index].Fork(customer, index * 50)
+    print("         Barber  1  2  3  4  5  6  7  8  9  10  11  12  13  14  15 \n")
+    threads[0].Init("Customer #1")
+    threads[1].Init("Customer #2")
+    threads[2].Init("Customer #3")
+    threads[3].Init("Customer #4")
+    threads[4].Init("Customer #5")
+    threads[5].Init("Customer #6")
+    threads[6].Init("Customer #7")
+    threads[7].Init("Customerf#8")
+    threads[8].Init("Customer #9")
+    threads[9].Init("Customer #10")
+    threads[10].Init("Customer #11")
+    threads[11].Init("Customer #12")
+    threads[12].Init("Customer #13")
+    threads[13].Init("Customer #14")
+    threads[14].Init("Customer #15")   
+     -- Iterate over the customers
+    for index = 0 to CUST_COUNT - 1
+      threads[index].Fork(customer, index)
     endFor
     ThreadFinish()
-    print("-- PART 1: END TESTING -- \n")
 endFunction
 
 
@@ -106,19 +98,13 @@ endFunction
 
 ---------------------------------------------------------------------
 function barber(timeToWait: int)
-    print("New Barber: ")
-    print(currentThread.name)
-    print("\n\n")
-
-    wait(timeToWait)
-
     while (true)
         customers.Down()    
-        mutexLock.Down()
+        mutexLock.Lock()
         waitCounter = waitCounter - 1    
         barbers.Up()
-        mutexLock.Up()
-        cut_hair()
+        mutexLock.Unlock()
+        cut_hair(timeToWait)
     endWhile
   endFunction
 
@@ -126,25 +112,23 @@ function barber(timeToWait: int)
 ---------------------------------------------------------------------
 -- CUSTOMER
 ---------------------------------------------------------------------
-function customer(timeToWait: int)
-    wait(timeToWait)    -- Wait a specific amount of time before a 'new' customer arrives
-    print("New Customer Has Arrived: ")
-    print(currentThread.name)
-    print("\n")
-    mutexLock.Down()
+function customer(id: int)
+--wait(timeToWait)    -- Wait a specific amount of time before a 'new' customer arrives
+    mutexLock.Lock()
+    E(id)
     -- If there is no one waiting, wake up the barber and get haircut/take a seat
     if (waitCounter < CHAIRS)  
         waitCounter = waitCounter + 1
+        S(id)
         customers.Up()
-        mutexLock.Up()            
+        mutexLock.Unlock()            
         barbers.Down()        
-        get_haircut()     
+        get_haircut(id)
+        L(id)     
     -- The shop is full (NO seats)    
     else
-        mutexLock.Up()
-        print("--> SHOP FULL: ")
-        print(currentThread.name)
-        print(" will now leave the store.\n\n")
+        L(id)
+        mutexLock.Unlock()
     endIf
   endFunction
 
@@ -154,32 +138,108 @@ function customer(timeToWait: int)
 function wait(timeToWait: int)
     var index: int
     for index = 1 to timeToWait
+        currentThread.Yield()
       endFor
   endFunction
 
----------------------------------------------------------------------
--- Print Helper Function that shows that 
--- someone is getting their haircut
----------------------------------------------------------------------
-function get_haircut()
-    print("----> ")
-    print(currentThread.name)
-    print(" is getting_haircut! \n")
+function get_haircut(custNum: int)
+    mutexLock.Lock()
+    B(custNum)
+    wait(50)
+    F(custNum)
+    mutexLock.Unlock()
   endFunction
 
----------------------------------------------------------------------
--- Print Helper Function that shows that a 
--- barber is cutting hair
----------------------------------------------------------------------
-function cut_hair()
-    print("-------------> ")
-    print(currentThread.name)
-    print(" is cutting_hair! \n")
-    wait(100)
-    print("------------->")
-    print(currentThread.name)
-    print(" finished cutting_hair! \n")
+function cut_hair(custNum: int)
+    mutexLock.Lock()
+    Start()
+    wait(75)
+    End()
+    mutexLock.Unlock()
   endFunction
+---------------------------------------------------------------------
+-- Print Helper Function
+---------------------------------------------------------------------
+function Start()
+    printChairs()
+    print(" start \n")
+  endFunction
+
+function End()
+    printChairs()
+    print(" end \n")
+  endFunction
+
+function printChairs()
+    var
+      index: int
+      for index = 1 to waitCounter
+          print("X")
+        endFor
+      for index = 1 to CHAIRS - waitCounter
+          print("-")
+        endFor
+  endFunction
+
+  --------------------
+  -- Print extra spaces
+  --------------------
+  function printSpace(space: int)
+      var 
+        index: int
+        totSpaces: int
+      print("            ")
+      totSpaces = space * 3
+      for index = 1 to totSpaces
+          print(" ")
+        endFor
+    endFunction
+
+  --------------------
+  -- E: Enter
+  --------------------
+  function E(custNum: int)
+      printChairs()
+      printSpace(custNum)
+      print("E \n")
+    endFunction
+
+  --------------------
+  -- S: Sit in waiting chair
+  --------------------
+  function S(custNum: int)
+      printChairs()
+      printSpace(custNum)
+      print("S \n")
+    endFunction
+
+  --------------------
+  -- B: Begin Haircut
+  --------------------
+  function B(custNum: int)
+      printChairs()
+      printSpace(custNum)
+      print("B \n")
+    endFunction
+
+  --------------------
+  -- F: Finish haircut
+  --------------------
+  function F(custNum: int)
+      printChairs()
+      printSpace(custNum)
+      print("F \n")
+    endFunction
+
+  --------------------
+  -- L: Leave
+  --------------------
+  function L(custNum: int)
+      printChairs()
+      printSpace(custNum)
+      print("L \n")
+    endFunction
+
 
 -------------------------------------------------------------------------------
 -------------------------  PART2: Game Parlor  --------------------------------
@@ -267,15 +327,15 @@ behavior GameParlor
     -- remaining for the particular action
     -----------------------------------
     method print(printString: String, num: int)
-        print("THREAD[")
+        print("")
         print(currentThread.name)
-        print("] ")
+        print(" ")
         print(printString)
-        print(" using ")
+        print(" ")
         printInt(num)
-        print(" dice! \n ---Now there are ")
+        print("\n-------------------------------- Number of dice now available = ")
         printInt(numDiceLeft)
-        print(" dice left...\n\n")
+        print("\n\n")
       endMethod
 
     -----------------------------------
@@ -283,7 +343,7 @@ behavior GameParlor
     -----------------------------------
     method getDice(diceNeeded: int)
         monitoringLock.Lock()
-        self.print(" NEEDS ", diceNeeded)
+        self.print("requests", diceNeeded)
         numWaitingGroups = numWaitingGroups + 1
 
         -- if there are more than one person in line,
@@ -304,7 +364,7 @@ behavior GameParlor
         numDiceLeft = numDiceLeft - diceNeeded
         numWaitingGroups = numWaitingGroups - 1
         restOfLine.Signal(&monitoringLock)
-        self.print("PROCEEDS", diceNeeded)
+        self.print("proceeds with", diceNeeded)
         monitoringLock.Unlock()
       endMethod
 
@@ -315,7 +375,7 @@ behavior GameParlor
         monitoringLock.Lock()
         numDiceLeft = numDiceLeft + diceReturned
 
-        self.print("DICE ADDED BACK", diceReturned)
+        self.print("releases and adds back", diceReturned)
 
         firstInLine.Signal(&monitoringLock)
         monitoringLock.Unlock()

@@ -5,10 +5,10 @@ header Main
   functions
     main ()
     testSleepingBarberPart1()
-    get_haircut()
-    cut_hair()
+    get_haircut(custNum: int)
+    cut_hair(custNum: int)
     barber(timeToWait: int)
-    customer(timeToWait: int)
+    customer(id: int)
     wait(timeToWait: int)
 
 
