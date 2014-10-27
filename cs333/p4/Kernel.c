@@ -1,6 +1,8 @@
 code Kernel
 
-  -- <PUT YOUR NAME HERE>
+  -- Justin Shuck
+  -- CS333 Proj 4
+  -- Due: 10/28/2014
 
 -----------------------------  InitializeScheduler  ---------------------------------
 
@@ -690,8 +692,43 @@ code Kernel
         -- This method is called once at kernel startup time to initialize
         -- the one and only "ThreadManager" object.
         -- 
-          print ("Initializing Thread Manager...\n")
-          -- NOT IMPLEMENTED
+
+        -- ############   PART1: NEW code   ############
+        var 
+          index: int
+
+        print ("Initializing Thread Manager...\n")
+        freeList = new List[Thread]
+        threadTable = new array of Thread {MAX_NUMBER_OF_PROCESSES of new Thread}
+
+        -- Allocating a fixed number of threads to re-use
+        threadTable[0].Init("thread_0")
+        threadTable[1].Init("thread_1")
+        threadTable[2].Init("thread_2")
+        threadTable[3].Init("thread_3")
+        threadTable[4].Init("thread_4")
+        threadTable[5].Init("thread_5")
+        threadTable[6].Init("thread_6")
+        threadTable[7].Init("thread_7")
+        threadTable[8].Init("thread_8")
+        threadTable[9].Init("thread_9")
+
+        -- We need to set the status for each thread
+        -- to UNUSED, then add it to the freeList
+        for index = 0 to MAX_NUMBER_OF_PROCESSES-1
+            threadTable[index].status = UNUSED
+            freeList.AddToEnd( & threadTable[index])
+          endFor
+
+        -- Initialize the ThreadManager Lock and
+        -- condition variables
+        threadManagerLock = new Mutex
+        threadManagerLock.Init()
+        aThreadBecameFree = new Condition
+        aThreadBecameFree.Init()
+        leadThread = new Condition
+        leadThread.Init()
+        -- ############   PART1: NEW code   ############
         endMethod
 
       ----------  ThreadManager . Print  ----------
@@ -724,8 +761,24 @@ code Kernel
         -- This method returns a new Thread; it will wait
         -- until one is available.
         -- 
-          -- NOT IMPLEMENTED
-          return null
+        -- ############   PART1: NEW code   ############  
+        -- If the freeList is empty
+        -- wait on condition of a thread becoming available
+        var
+          threadToReturn: ptr to Thread
+        threadManagerLock.Lock()
+
+        while freeList.IsEmpty()
+            leadThread.Wait(&threadManagerLock)
+          endWhile
+
+        threadToReturn = freeList.Remove()
+        threadToReturn.status = JUST_CREATED
+        aThreadBecameFree.Signal(& threadManagerLock)
+        threadManagerLock.Unlock()
+        return threadToReturn
+        -- ############   PART1: NEW code   ############                
+        
         endMethod
 
       ----------  ThreadManager . FreeThread  ----------
@@ -734,8 +787,20 @@ code Kernel
         -- 
         -- This method is passed a ptr to a Thread;  It moves it
         -- to the FREE list.
-        -- 
-          -- NOT IMPLEMENTED
+
+        -- ############   PART1: NEW code   ############
+        --  - Add a Thread back to the freelist
+        --  - Signal anyone waiting on the condition
+        threadManagerLock.Lock()
+        if th
+            th.status = UNUSED
+            freeList.AddToEnd(th)
+            leadThread.Signal(& threadManagerLock)
+        else
+            FatalError("Trying to Free an Invalid Thread")
+          endIf
+        threadManagerLock.Unlock()
+        -- ############   PART1: NEW code   ############
         endMethod
 
     endBehavior

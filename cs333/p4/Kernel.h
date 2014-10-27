@@ -191,6 +191,11 @@ header Kernel
   class ThreadManager
     superclass Object
     fields
+      -- ######################  PART 1: ADDED CODE  ######################
+      threadManagerLock: Mutex
+      leadThread: Condition
+      aThreadBecameFree: Condition
+      --  #################################################################
       threadTable: array [MAX_NUMBER_OF_PROCESSES] of Thread
       freeList: List [Thread]
     methods
