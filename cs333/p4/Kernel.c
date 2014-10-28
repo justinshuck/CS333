@@ -888,7 +888,35 @@ code Kernel
         -- This method is called once at kernel startup time to initialize
         -- the one and only "processManager" object.  
         --
-        -- NOT IMPLEMENTED
+
+        -- ############   PART2: NEW code   ############
+        -- We need to initialize:
+        --   - processTable array
+        --   - the ProcessControlBlocks in that array
+        --   - the processManagerLock
+        --   - the aProcessBecameFree and aProcessDied 
+        --   - the freeList
+        var index: int
+
+        ---------- freeList ----------------
+        freeList = new List[ProcessControlBlock]
+
+        -------- processTable of ProcessControlBlock ------------
+        processTable = new array of ProcessControlBlock {MAX_NUMBER_OF_PROCESSES of new ProcessControlBlock}
+        for index = 0 to MAX_NUMBER_OF_PROCESSES-1
+            processTable[index].Init()
+            freeList.AddToEnd(& processTable[index])
+          endFor
+
+        ----------- processManagerLock, aProcessBecameFree & aProcessDied --------------
+        processManagerLock = new Mutex
+        processManagerLock.Init()
+        aProcessBecameFree = new Condition
+        aProcessBecameFree.Init()
+        aProcessDied = new Condition
+        aProcessDied.Init()
+
+        -- ############   PART2: NEW code   ############        
         endMethod
 
       ----------  ProcessManager . Print  ----------
@@ -943,8 +971,25 @@ code Kernel
         -- This method returns a new ProcessControlBlock; it will wait
         -- until one is available.
         --
-          -- NOT IMPLEMENTED
-          return null
+        -- ############   PART2: NEW code   ############
+        -- GetANewProcess is similar to GetANew Thread
+        -- thus, I used that framework to create this method
+        var 
+          processToReturn: ptr to ProcessControlBlock
+        processManagerLock.Lock()
+
+        while freeList.IsEmpty()
+            aProcessBecameFree.Wait(&processManagerLock)
+          endWhile
+
+        processToReturn = freeList.Remove()
+        processToReturn.status = ACTIVE
+
+        processManagerLock.Unlock()
+        return processToReturn
+
+        -- ############   PART2: NEW code   ############        
+        
         endMethod
 
       ----------  ProcessManager . FreeProcess  ----------
@@ -954,7 +999,15 @@ code Kernel
         -- This method is passed a ptr to a Process;  It moves it
         -- to the FREE list.
         --
-          -- NOT IMPLEMENTED
+        -- ############   PART2: NEW code   ############
+        -- FreeProcess method needs to change the process status to FREE
+        -- and add it to the free list
+        processManagerLock.Lock()
+        p.status = FREE
+        freeList.AddToEnd(p)
+        aProcessBecameFree.Signal(& processManagerLock)
+        processManagerLock.Unlock()
+        -- ############   PART2: NEW code   ############
         endMethod
 
 
@@ -1062,13 +1115,78 @@ code Kernel
       ----------  FrameManager . GetNewFrames  ----------
 
       method GetNewFrames (aPageTable: ptr to AddrSpace, numFramesNeeded: int)
-          -- NOT IMPLEMENTED
+          -- ############   PART3: NEW code   ############
+          -- This method aquires the frame manager lock and then
+          -- waits on newFramesAvailable until there are enough frames to.
+          -- After looping over the frames we adjust the number of free frames,
+          -- set aPageTable.numberOfPages to the number of frames we just allocated
+          var
+            index, addr, frame: int
+
+          -- Aquire frame manager lock
+          frameManagerLock.Lock()
+
+          --Waits on newFramesAvailable until there are enough frames
+          while numberFreeFrames < numFramesNeeded
+              newFramesAvailable.Wait(& frameManagerLock)
+            endWhile
+
+          -- Loop on the frames using the technique described in the hw assignment:
+          -- Determine which frames are free (using BitMap), Figure out the address 
+          -- of the free framesand execute a setFrameAddr to  set to store the address of the frame 
+          for index = 0 to numFramesNeeded-1
+              frame = framesInUse.FindZeroAndSet()
+              addr = PHYSICAL_ADDRESS_OF_FIRST_PAGE_FRAME + (frame * PAGE_SIZE)
+              aPageTable.SetFrameAddr(index, addr)
+            endFor
+
+          -- Adjust the number of free frames
+          numberFreeFrames = numberFreeFrames - numFramesNeeded
+
+          -- Sets aPageTable.numberOfPages to the number of frames that were allocated
+          aPageTable.numberOfPages = aPageTable.numberOfPages + numFramesNeeded
+
+          frameManagerLock.Unlock()
+          -- ############   PART3: NEW code   ############
         endMethod
 
       ----------  FrameManager . ReturnAllFrames  ----------
 
       method ReturnAllFrames (aPageTable: ptr to AddrSpace)
-          -- NOT IMPLEMENTED
+          -- ############   PART3: NEW code   ############
+          -- Think about this as doing the opposite as 'GetNewFrames',
+          -- We want to begin by aquiring the frame lock, get the number 
+          -- of frames to return, and then perform a loop over the frames to clear each bit 
+          -- (by getting the address from the page table and get the corresponding bitnumber). After 
+          -- looping we want to do a broadcast, update the aPageTable.numberOfPages 
+          -- and release the lock
+          var
+            index, holdFrames, addr, bit: int
+
+          -- Aquire the lock
+          frameManagerLock.Lock()
+          aPageTable.SetToThisPageTable()
+
+          holdFrames = aPageTable.numberOfPages
+          
+          -- The loop that was described in the method call.
+          -- Basically we want to get the address from the page table, get its
+          -- bit number and clear each bit
+          for index = 0 to holdFrames-1
+              addr = aPageTable.ExtractFrameAddr(index)
+              bit = (addr - PHYSICAL_ADDRESS_OF_FIRST_PAGE_FRAME) / PAGE_SIZE
+              framesInUse.ClearBit(bit)
+              numberFreeFrames = numberFreeFrames+1
+            endFor
+
+          -- Broadcast that the frames we allocated are available
+          newFramesAvailable.Broadcast(& frameManagerLock)
+
+          -- Update the aPageTable.numberOfPages
+          aPageTable.numberOfPages = aPageTable.numberOfPages - holdFrames
+          -- Release the lock
+          frameManagerLock.Unlock()
+          -- ############   PART3: NEW code   ############
         endMethod
 
     endBehavior
