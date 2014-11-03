@@ -1824,9 +1824,10 @@ endFunction
   -- ############  NEW code   ############
   function Handle_Sys_Exit (returnStatus: int)
       -- NOT IMPLEMENTED
-      print("Handle_sys_Exit called with return status = ")
+      print("Handle_sys_Exit invoked!\n") 
+      print("returnStatus = ")
       printInt(returnStatus)
-      print(".\n")
+      print("\n")
     endFunction
   -- ############   NEW code   ############
 
@@ -1841,7 +1842,7 @@ endFunction
   -- ############   NEW code   ############
   function Handle_Sys_Yield ()
       -- NOT IMPLEMENTED
-      print("Handle_Sys_Yield called. \n")
+      print("Handle_Sys_Yield invoked! \n")
     endFunction
   -- ############   NEW code   ############
 
@@ -1849,7 +1850,7 @@ endFunction
   -- ############   NEW code   ############
   function Handle_Sys_Fork () returns int
       -- NOT IMPLEMENTED
-      print("Handle_Sys_Fork called. \n")
+      print("Handle_Sys_Fork invoked! \n")
       return 1000
     endFunction
   -- ############   NEW code   ############
@@ -1857,9 +1858,10 @@ endFunction
   -- ############   NEW code   ############
   function Handle_Sys_Join (processID: int) returns int
       -- NOT IMPLEMENTED
-      print("Handle_Sys_Join called with ProcessID = ")
+      print("Handle_Sys_Join invoked!\n")
+      print("processID = ")
       printInt(processID)
-      print(".\n")
+      print("\n")
       return 2000
     endFunction
   -- ############   NEW code   ############
@@ -1941,11 +1943,11 @@ endFunction
       if numOfBytes < 0
           FatalError("ERROR: Error has occured in Handle_Sys_Create")
         endIf
-      print(" Handle_Sys_Create called with ")
-      printHexVar("Virtual Address = ", filename asInteger)
-      print(" and filename = ")
+      print("Handle_Sys_Create invoked!\n")
+      printHexVar("virt addr of filename = ", filename asInteger)
+      print("filename = ")
       printString(&stringStorage)
-      print(".\n")
+      print("\n")
       return 4000
     endFunction
   -- ############   NEW code   ############
@@ -1962,11 +1964,11 @@ endFunction
       if numOfBytes < 0
           FatalError("ERROR: Error has occured in Handle_Sys_Open")
         endIf
-      print(" Handle_Sys_Open called with ")
-      printHexVar("Virtual Address = ", filename asInteger)
-      print(" and filename = ")
+      print("Handle_Sys_Open called invoked! \n")
+      printHexVar("virt addr of filename = ", filename asInteger)
+      print("filename = ")
       printString(&stringStorage)
-      print(".\n")
+      print("\n")
 
       return 5000
     endFunction
@@ -1975,28 +1977,29 @@ endFunction
   -- ############   NEW code   ############
   function Handle_Sys_Read (fileDesc: int, buffer: ptr to char, sizeInBytes: int) returns int
       -- NOT IMPLEMENTED
-      print("Handle_Sys_Read called with fileDesc = ")
+      print("Handle_Sys_Read invoked! \n fileDesc = ")
       printInt(fileDesc)
-      print(", Buffer(Virtual Address) = ")
+      print("\nvirt addr of buffer = ")
       printHex(buffer asInteger)
-      print(", sizeInBytes = ")
+      print("\nsizeInBytes = ")
       printInt(sizeInBytes)
-      print(".\n")
+      print("\n")
 
-      return 60000
+      return 6000
     endFunction
   -- ############   NEW code   ############
 -----------------------------  Handle_Sys_Write  ---------------------------------
   -- ############   NEW code   ############
   function Handle_Sys_Write (fileDesc: int, buffer: ptr to char, sizeInBytes: int) returns int
       -- NOT IMPLEMENTED
-      print("Handle_Sys_Write called with fileDesc = ")
+      print("Handle_Sys_Write invoked!\n")
+      print("fileDesc = ")
       printInt(fileDesc)
-      print(", Buffer(Virtual Address) = ")
+      print("\nvirt addr of buffer = ")
       printHex(buffer asInteger)
-      print(", sizeInBytes = ")
+      print("\nsizeInBytes = ")
       printInt(sizeInBytes)
-      print(".\n")
+      print("\n")
       return 7000
     endFunction
   -- ############   NEW code   ############
@@ -2004,18 +2007,20 @@ endFunction
   -- ############   NEW code   ############
   function Handle_Sys_Seek (fileDesc: int, newCurrentPos: int) returns int
       -- NOT IMPLEMENTED
-      print("Handle_Sys_Seek called with fileDesc = ")
+      print("Handle_Sys_Seek invoked!\n") 
+      print("fileDesc = ")
       printInt(fileDesc)
-      print(" and newCurrentPos = ")
+      print("\nnewCurrentPos = ")
       printInt(newCurrentPos)
-      print(".\n")
+      print("\n")
       return 8000
     endFunction
   -- ############   NEW code   ############
 -----------------------------  Handle_Sys_Close  ---------------------------------
   -- ############   NEW code   ############
   function Handle_Sys_Close (fileDesc: int)
-      print(" Handle_Sys_Close called with fileDes = ")
+      print("Handle_Sys_Close invoked!\n") 
+      print("fileDes = ")
       printInt(fileDesc)
       print(".\n")
     endFunction
@@ -2025,7 +2030,7 @@ endFunction
   -- ############   NEW code   ############
 function printString( arg: String)
     -- Helper function to print a char array string
-    printHex(arg asInteger)
+    print(arg)
   endFunction
   -- ############   NEW code   ############
 
