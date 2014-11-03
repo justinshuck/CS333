@@ -14,8 +14,9 @@ header Kernel
     PAGE_SIZE = 8192                                  -- in hex: 0x0000 2000
     PHYSICAL_ADDRESS_OF_FIRST_PAGE_FRAME = 1048576    -- in hex: 0x0010 0000
     --NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512              -- in hex: 0x0000 0200
+    -- ############   NEW code   ############
     NUMBER_OF_PHYSICAL_PAGE_FRAMES = 100               -- for testing only
-
+    -- ############   NEW code   ############
     MAX_NUMBER_OF_PROCESSES = 10
     MAX_STRING_SIZE = 20
     MAX_PAGES_PER_VIRT_SPACE = 20
@@ -59,9 +60,11 @@ header Kernel
     processManager: ProcessManager
     threadManager: ThreadManager
     frameManager: FrameManager
+    -- ############   NEW code   ############
     diskDriver: DiskDriver
     --serialDriver: SerialDriver
     fileManager: FileManager
+    -- ############   NEW code   ############
 
   functions
 
@@ -103,8 +106,9 @@ header Kernel
     FatalError_ThreadVersion (errorMessage: ptr to array of char)
     SetInterruptsTo (newStatus: int) returns int
     ProcessFinish (exitStatus: int)
+    -- ############   NEW code   ############
     InitFirstProcess ()
-
+    -- ############   NEW code   ############
     -- Routines from Switch.s:
 
     external Switch (prevThread, nextThread: ptr to Thread)
@@ -192,11 +196,9 @@ header Kernel
   class ThreadManager
     superclass Object
     fields
-      -- ######################  PART 1: ADDED CODE  ######################
       threadManagerLock: Mutex
       leadThread: Condition
       aThreadBecameFree: Condition
-      --  #################################################################
       threadTable: array [MAX_NUMBER_OF_PROCESSES] of Thread
       freeList: List [Thread]
     methods

@@ -1,8 +1,8 @@
 code Kernel
 
   -- Justin Shuck
-  -- CS333 Proj 4
-  -- Due: 10/28/2014
+  -- CS333 Proj 5
+  -- Due: 11/4/2014
 
 -----------------------------  InitializeScheduler  ---------------------------------
 
@@ -1023,7 +1023,7 @@ code Kernel
     --
       FatalError ("ProcessFinish is not implemented")
     endFunction
--- ############   PART0: NEW code   ############
+-- ############   NEW code   ############
 -----------------------------  InitFirstProcess  --------------------------
 
 function InitFirstProcess()
@@ -1035,7 +1035,7 @@ function InitFirstProcess()
   ptrThread.Fork(StartUserProcess,0)
 
 endFunction
--- ############   PART0: NEW code   ############
+-- ############   NEW code   ############
 -- ############   NEW code   ############
 -----------------------------  StartUserProcess  --------------------------
 
@@ -1611,7 +1611,7 @@ endFunction
       currentThread.Yield ()
       currentInterruptStatus = ENABLED
     endFunction
-
+  -- ############   NEW code   ############
 -----------------------------  DiskInterruptHandler  --------------------------
 
   function DiskInterruptHandler ()
@@ -1633,6 +1633,7 @@ endFunction
       endIf
 
     endFunction
+    -- ############   NEW code   ############
 
 -----------------------------  SerialInterruptHandler  --------------------------
 
@@ -1845,15 +1846,15 @@ endFunction
   -- ############   NEW code   ############
 
 -----------------------------  Handle_Sys_Fork  ---------------------------------
-  -- ############   TASK 2 : NEW code   ############
+  -- ############   NEW code   ############
   function Handle_Sys_Fork () returns int
       -- NOT IMPLEMENTED
       print("Handle_Sys_Fork called. \n")
       return 1000
     endFunction
-  -- ############   TASK 2 : NEW code   ############
+  -- ############   NEW code   ############
 -----------------------------  Handle_Sys_Join  ---------------------------------
-  -- ############   TASK 2 : NEW code   ############
+  -- ############   NEW code   ############
   function Handle_Sys_Join (processID: int) returns int
       -- NOT IMPLEMENTED
       print("Handle_Sys_Join called with ProcessID = ")
@@ -1861,9 +1862,9 @@ endFunction
       print(".\n")
       return 2000
     endFunction
-  -- ############   TASK 2 : NEW code   ############
+  -- ############   NEW code   ############
 -----------------------------  Handle_Sys_Exec  ---------------------------------
-  -- ############   TASK 2,3 : NEW code   ############
+  -- ############   NEW code   ############
   function Handle_Sys_Exec (filename: ptr to array of char) returns int
       -- This function will read a new executable program from disk and copy it into 
       -- the address space of the process which invoked the Exec. This begins execution of the new program.
@@ -1894,13 +1895,13 @@ endFunction
     -- Get the filename into system space
     numOfBytes = ptrToPCB.addrSpace.GetStringFromVirtual(&stringStorage, filename asInteger, MAX_STRING_SIZE)
     if numOfBytes < 0
-        return -1000
+        return -1
       endIf
 
     -- Open the executable 
     ptrOpenFile2 = fileManager.Open(&stringStorage)
     if ptrOpenFile2 == null
-        return -100
+        return -1
       endIf
 
 
@@ -1909,11 +1910,11 @@ endFunction
     -- recourse will become permanently locked up)
     -- Check to see if there was an error loading a program into
     -- memory
-    --newAddrSpace.Init()
     initPC = ptrOpenFile2.LoadExecutable(& newAddrSpace)
     if initPC < 0
-        return -10
+        return -1
       endIf
+
     -- Compute the initial value(# of pages * Page size) and then jump into the
     -- user-level program
     ptrToPCB.addrSpace = newAddrSpace
@@ -1922,11 +1923,8 @@ endFunction
     initUserStackTop = (newAddrSpace.numberOfPages * PAGE_SIZE)
     ptrInitSystemStackTop = & currentThread.systemStack[SYSTEM_STACK_SIZE-1]
     previousStatus = SetInterruptsTo(DISABLED)
-    --newAddrSpace.SetToThisPageTable()
     currentThread.isUserThread = true
     BecomeUserThread(initUserStackTop, initPC, ptrInitSystemStackTop asInteger)
-
-
       return 3000
     endFunction
   -- ############   NEW code   ############
