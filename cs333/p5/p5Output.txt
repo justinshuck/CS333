@@ -1,4 +1,4 @@
-Script started on Sun, Nov  2, 2014  4:02:54 PM
+Script started on Sun, Nov  2, 2014  4:31:47 PM
 [?1034h]0;~/cs333/p5
 [32mjustin@Justin [33m~/cs333/p5[0m
 $ make
@@ -7,7 +7,7 @@ asm Kernel.s
 lddd Runtime.o Switch.o System.o List.o BitMap.o Kernel.o Main.o -o os
 ]0;~/cs333/p5
 [32mjustin@Justin [33m~/cs333/p5[0m
-$ blitz -f [K[Kg os
+$ blitz -g os
 Beginning execution...
 ====================  KPL PROGRAM STARTING  ====================
 Initializing Thread Scheduler...
@@ -24,20 +24,21 @@ User-level program 'TestProgram1' is running...
 ***** Should print:
 *****     Handle_Sys_Yield invoked!
 
-Handle_Sys_Yield called. 
+Handle_Sys_Yield invoked! 
 
 ***** About to call Sys_Fork...
 ***** Should print:
 *****     Handle_Sys_Fork invoked!
 
-Handle_Sys_Fork called. 
+Handle_Sys_Fork invoked! 
 
 ***** About to call Sys_Join...
 ***** Should print:
 *****     Handle_Sys_Join invoked!
 *****     processID = 1111
 
-Handle_Sys_Join called with ProcessID = 1111.
+Handle_Sys_Join invoked!
+processID = 1111
 
 ***** About to call Sys_Create...
 ***** Should print:
@@ -45,8 +46,9 @@ Handle_Sys_Join called with ProcessID = 1111.
 *****     virt addr of filename = 0x0000BFF8
 *****     filename = MyFileName
 
- Handle_Sys_Create called with Virtual Address =  = 0x0000BFF8
- and filename = 0x00028864.
+Handle_Sys_Create invoked!
+virt addr of filename =  = 0x0000BFF8
+filename = MyFileName
 
 ***** About to call Sys_Open...
 ***** Should print:
@@ -54,8 +56,9 @@ Handle_Sys_Join called with ProcessID = 1111.
 *****     virt addr of filename = 0x0000BFF8
 *****     filename = MyFileName
 
- Handle_Sys_Open called with Virtual Address =  = 0x0000BFF8
- and filename = 0x00028864.
+Handle_Sys_Open called invoked! 
+virt addr of filename =  = 0x0000BFF8
+filename = MyFileName
 
 ***** About to call Sys_Read...
 ***** Should print:
@@ -64,10 +67,10 @@ Handle_Sys_Join called with ProcessID = 1111.
 *****     virt addr of buffer = 0x0000B0B0
 *****     sizeInBytes = 3333
 
-Handle_Sys_Read called with fileDesc = 2222, Buffer(Virtual Address) = 0x0000B0B0, sizeInBytes = 3333.
-
-*************** ERROR: Bad return value from Sys_Read
-  return value = 60000
+Handle_Sys_Read invoked! 
+ fileDesc = 2222
+virt addr of buffer = 0x0000B0B0
+sizeInBytes = 3333
 
 ***** About to call Sys_Write...
 ***** Should print:
@@ -76,7 +79,10 @@ Handle_Sys_Read called with fileDesc = 2222, Buffer(Virtual Address) = 0x0000B0B
 *****     virt addr of buffer = 0x0000B0B0
 *****     sizeInBytes = 5555
 
-Handle_Sys_Write called with fileDesc = 4444, Buffer(Virtual Address) = 0x0000B0B0, sizeInBytes = 5555.
+Handle_Sys_Write invoked!
+fileDesc = 4444
+virt addr of buffer = 0x0000B0B0
+sizeInBytes = 5555
 
 ***** About to call Sys_Seek...
 ***** Should print:
@@ -84,21 +90,25 @@ Handle_Sys_Write called with fileDesc = 4444, Buffer(Virtual Address) = 0x0000B0
 *****     fileDesc = 6666
 *****     newCurrentPos = 7777
 
-Handle_Sys_Seek called with fileDesc = 6666 and newCurrentPos = 7777.
+Handle_Sys_Seek invoked!
+fileDesc = 6666
+newCurrentPos = 7777
 
 ***** About to call Sys_Close...
 ***** Should print:
 *****     Handle_Sys_Close invoked!
 *****     fileDesc = 8888
 
- Handle_Sys_Close called with fileDes = 8888.
+Handle_Sys_Close invoked!
+fileDes = 8888.
 
 ***** About to call Sys_Exit...
 ***** Should print:
 *****     Handle_Sys_Exit invoked!
 *****     returnStatus = 9999
 
-Handle_sys_Exit called with return status = 9999.
+Handle_sys_Exit invoked!
+returnStatus = 9999
 
 ***** Syscall Test Complete *****
 
@@ -146,12 +156,12 @@ info about commands.
 > q
 Number of Disk Reads    = 10
 Number of Disk Writes   = 0
-Instructions Executed   = 1063154
+Instructions Executed   = 1063117
 Time Spent Sleeping     = 0
-    Total Elapsed Time  = 1063154
+    Total Elapsed Time  = 1063117
 ]0;~/cs333/p5
 [32mjustin@Justin [33m~/cs333/p5[0m
 $ exit
 exit
 
-Script done on Sun, Nov  2, 2014  4:03:03 PM
+Script done on Sun, Nov  2, 2014  4:31:56 PM
