@@ -24,14 +24,14 @@ code TestProgram3
     --     NUMBER_OF_ENVIRONMENT_PAGES = 0
 
 
-       --SysExitTest ()
+       SysExitTest ()
        --BasicForkTest ()
        --YieldTest ()
-      --ForkTest ()
+       --ForkTest ()
        --JoinTest1 ()
        --JoinTest2 ()
        --JoinTest3 ()
-       JoinTest4 ()
+       --JoinTest4 ()
        --ManyProcessesTest1 ()
        --ManyProcessesTest2 ()
        --ManyProcessesTest3 ()

@@ -771,7 +771,6 @@ code Kernel
 
         threadToReturn = freeList.Remove()
         threadToReturn.status = JUST_CREATED
-        aThreadBecameFree.Signal(& threadManagerLock)
         threadManagerLock.Unlock()
         return threadToReturn             
         
@@ -908,7 +907,7 @@ code Kernel
         aProcessBecameFree.Init()
         aProcessDied = new Condition
         aProcessDied.Init()
-     
+        nextPid = 0
         endMethod
 
       ----------  ProcessManager . Print  ----------
@@ -974,9 +973,11 @@ code Kernel
             aProcessBecameFree.Wait(&processManagerLock)
           endWhile
 
+        nextPid = nextPid + 1
+
         processToReturn = freeList.Remove()
         processToReturn.status = ACTIVE
-        nextPid = nextPid + 1
+
         processToReturn.pid = nextPid
 
         processManagerLock.Unlock()
@@ -1111,32 +1112,36 @@ code Kernel
 -----------------------------  ProcessFinish  --------------------------
 
   function ProcessFinish (exitStatus: int)
-    --
-    -- This routine is called when a process is to be terminated.  It will
-    -- free the resources held by this process and will terminate the
-    -- current thread.
-    --
-    var
-      proc: ptr to ProcessControlBlock
-      ignore: int
+      --
+      -- This routine is called when a process is to be terminated.  It will
+      -- free the resources held by this process and will terminate the
+      -- current thread.
+      --
+      var
+        proc: ptr to ProcessControlBlock
+        ignore: int
 
-    -- Save exitStatus
-    currentThread.myProcess.exitStatus = exitStatus
-    -- Disable Interrupts
-    ignore = SetInterruptsTo(DISABLED)
+      -- Save exitStatus
+      currentThread.myProcess.exitStatus = exitStatus
 
-    -- Disconnect the PCB from the Thread
-    proc = currentThread.myProcess
-    currentThread.myProcess = null
-    proc.myThread = null
-    currentThread.isUserThread = false
+      -- Disable Interrupts
+      ignore = SetInterruptsTo(DISABLED)
 
-    -- Close any open files (FOR NEXT PROJECT)
-    --Re-enable interrupts
-    ignore = SetInterruptsTo(ENABLED)
+      -- Disconnect the PCB from the Thread
+      proc = currentThread.myProcess
+      currentThread.myProcess = null
+      proc.myThread = null
+      currentThread.isUserThread = false
+
+      -- Close any open files (FOR NEXT PROJECT)
+
+      --Re-enable interrupts
+      ignore = SetInterruptsTo(ENABLED)
+    
       -- Return all frames to the Free Pool and turn process into ZOMBIE
       frameManager.ReturnAllFrames( &proc.addrSpace)
       processManager.TurnIntoZombie(proc)
+    
       --Terminate thread (Parent will deal with the Zombie)
       ThreadFinish()
     endFunction
@@ -1954,7 +1959,6 @@ endFunction
       -- Not really a need for a Yield syscall in any OS that has preemptive scheduling,
       -- but it can be used to make sure that the other processes are really running.
       currentThread.Yield()
-      return
       --print("Handle_Sys_Yield invoked! \n")
     endFunction
 
@@ -1982,15 +1986,14 @@ endFunction
       newPCB = processManager.GetANewProcess()
       oldPCB = currentThread.myProcess
       newThread = threadManager.GetANewThread()
+      -- Initialize PCB
 
+      newPCB.parentsPid = oldPCB.pid
       -- Initialize thread
       newThread.name = currentThread.name
       newThread.status = newPCB.status
       newThread.myProcess = newPCB
-
-      -- Initialize PCB
       newPCB.myThread = newThread
-      newPCB.parentsPid = oldPCB.pid
 
       -- Grab the values in the user register and store a copy
       -- in the new Thread
@@ -2042,10 +2045,7 @@ endFunction
         child: ptr to ProcessControlBlock
         parent: ptr to ProcessControlBlock
         childsExitStatus: int
-        flag: bool
-
-      -- Flag variable is used to check the contions of a valid process.
-      flag = true
+  
       parent = currentThread.myProcess
 
       -- Identify the child Process.
@@ -2053,21 +2053,13 @@ endFunction
       for i = 0 to MAX_NUMBER_OF_PROCESSES-1
           child = &processManager.processTable[i]
           if child.pid == processID && child.parentsPid == parent.pid && child.status != FREE
-              flag = false
-              break
+              -- Wait for it to terminiate and get its exidCode when it returns
+              childsExitStatus = processManager.WaitForZombie(child)  
+              return childsExitStatus
             endIf
         endFor
 
-      -- If we go through the processTable and haven't changed the flag
-      -- then its not a valid PID
-      if flag == true
-          return -1
-        endIf
-      
-      -- Wait for it to terminiate and get its exidCode when it returns
-      childsExitStatus = processManager.WaitForZombie(child)  
-      
-      return childsExitStatus
+      return -1
 
     endFunction
 -----------------------------  Handle_Sys_Exec  ---------------------------------
