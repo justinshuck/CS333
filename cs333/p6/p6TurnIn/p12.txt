@@ -1,0 +1,158 @@
+Script started on Tue, Nov 11, 2014  2:23:47 PM
+
+justin@Justin ~/cs333/p6
+$ make && blitz -g os
+kpl TestProgram3 -unsafe
+asm TestProgram3.s
+lddd UserRuntime.o UserSystem.o TestProgram3.o -o TestProgram3
+diskUtil -i
+diskUtil -a MyProgram MyProgram
+diskUtil -a TestProgram1 TestProgram1
+diskUtil -a TestProgram2 TestProgram2
+diskUtil -a TestProgram3 TestProgram3
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Disk Driver...
+Initializing File Manager...
+
+ErrorTest running.
+
+Should print "User Program Error: Attempt to use a null pointer!"...
+
+User Program Error: Attempt to use a null pointer!  Type 'st' to see stack.
+
+Okay.
+
+Should print "An AddressException exception has occured while in user mode"...
+
+**********  An AddressException exception has occured while in user mode  **********
+
+  ProcessControlBlock   (addr=0x00029520)   pid=3, status=ACTIVE, parentsPid=1, exitStatus=0
+        addr        entry          Logical    Physical   Undefined Bits  Dirty  Referenced  Writeable  Valid
+     ==========   ==========     ==========  ==========  ==============  =====  ==========  =========  =====
+     0x0002954C:  0x00154005     0x00000000  0x00154000                            YES                  YES
+     0x00029550:  0x00158001     0x00002000  0x00158000                                                 YES
+     0x00029554:  0x0015C001     0x00004000  0x0015C000                                                 YES
+     0x00029558:  0x00160001     0x00006000  0x00160000                                                 YES
+     0x0002955C:  0x00164005     0x00008000  0x00164000                            YES                  YES
+     0x00029560:  0x00168003     0x0000A000  0x00168000                                        YES      YES
+     0x00029564:  0x0016C003     0x0000C000  0x0016C000                                        YES      YES
+     0x00029568:  0x00170003     0x0000E000  0x00170000                                        YES      YES
+     0x0002956C:  0x00174003     0x00010000  0x00174000                                        YES      YES
+     0x00029570:  0x0017800F     0x00012000  0x00178000                   YES      YES         YES      YES
+    myThread =   Thread "UserProgramThread"    status=RUNNING    (addr of Thread object: 0x0002BB68)
+
+  Thread "UserProgramThread"    (addr of Thread object: 0x0002BB68)
+    machine state:
+      r2: 0x00000000   0
+      r3: 0x00000000   0
+      r4: 0x00000000   0
+      r5: 0x00000000   0
+      r6: 0x00000000   0
+      r7: 0x00000000   0
+      r8: 0x00000000   0
+      r9: 0x00000000   0
+      r10: 0x00000000   0
+      r11: 0x00000000   0
+      r12: 0x00000000   0
+      r13: 0x00000000   0
+      r14: 0x00000000   0
+    stackTop = 0x0002CB5C
+    stack starting addr = 0x0002BBC4
+    status = RUNNING
+    is user thread: TRUE
+    user registers:
+      r1: 0x00000000   0
+      r2: 0x00000000   0
+      r3: 0x00000000   0
+      r4: 0x00000000   0
+      r5: 0x00000004   4
+      r6: 0x00000000   0
+      r7: 0x00000000   0
+      r8: 0x00000000   0
+      r9: 0x00000000   0
+      r10: 0x00004345   17221
+      r11: 0x00000000   0
+      r12: 0x00000000   0
+      r13: 0x0000003A   58
+      r14: 0x00013FA0   81824
+      r15: 0x00013F7C   81788
+
+Okay.
+
+Should print "A PageReadonlyException exception has occured while in user mode"...
+
+**********  A PageReadonlyException exception has occured while in user mode  **********
+
+  ProcessControlBlock   (addr=0x000295C8)   pid=4, status=ACTIVE, parentsPid=1, exitStatus=0
+        addr        entry          Logical    Physical   Undefined Bits  Dirty  Referenced  Writeable  Valid
+     ==========   ==========     ==========  ==========  ==============  =====  ==========  =========  =====
+     0x000295F4:  0x00154005     0x00000000  0x00154000                            YES                  YES
+     0x000295F8:  0x00158001     0x00002000  0x00158000                                                 YES
+     0x000295FC:  0x0015C001     0x00004000  0x0015C000                                                 YES
+     0x00029600:  0x00160001     0x00006000  0x00160000                                                 YES
+     0x00029604:  0x00164005     0x00008000  0x00164000                            YES                  YES
+     0x00029608:  0x00168003     0x0000A000  0x00168000                                        YES      YES
+     0x0002960C:  0x0016C003     0x0000C000  0x0016C000                                        YES      YES
+     0x00029610:  0x00170003     0x0000E000  0x00170000                                        YES      YES
+     0x00029614:  0x00174003     0x00010000  0x00174000                                        YES      YES
+     0x00029618:  0x0017800F     0x00012000  0x00178000                   YES      YES         YES      YES
+    myThread =   Thread "UserProgramThread"    status=RUNNING    (addr of Thread object: 0x0002CBAC)
+
+  Thread "UserProgramThread"    (addr of Thread object: 0x0002CBAC)
+    machine state:
+      r2: 0x000283C0   164800
+      r3: 0x00000004   4
+      r4: 0x00000000   0
+      r5: 0x00000000   0
+      r6: 0x00000000   0
+      r7: 0x00000000   0
+      r8: 0x00000000   0
+      r9: 0x00000000   0
+      r10: 0x00004345   17221
+      r11: 0x00000000   0
+      r12: 0x00000000   0
+      r13: 0x00000052   82
+      r14: 0x0002DACC   187084
+    stackTop = 0x0002DA70
+    stack starting addr = 0x0002CC08
+    status = RUNNING
+    is user thread: TRUE
+    user registers:
+      r1: 0x00000000   0
+      r2: 0x00000000   0
+      r3: 0x00000000   0
+      r4: 0x00000000   0
+      r5: 0x00000004   4
+      r6: 0x00000000   0
+      r7: 0x00000000   0
+      r8: 0x00000000   0
+      r9: 0x00000000   0
+      r10: 0x00004345   17221
+      r11: 0x00000000   0
+      r12: 0x00000000   0
+      r13: 0x0000003A   58
+      r14: 0x00013FA0   81824
+      r15: 0x00013F7C   81788
+
+Okay.
+
+Done.
+
+*****  A 'wait' instruction was executed and no more interrupts are scheduled... halting emulation!  *****
+
+Done!  The next instruction to execute will be:
+001138: 09000000       ret     
+Number of Disk Reads    = 11
+Number of Disk Writes   = 0
+Instructions Executed   = 4033401
+Time Spent Sleeping     = 9729
+    Total Elapsed Time  = 4043130
+
+justin@Justin ~/cs333/p6
+$ exit
+Script done on Tue, Nov 11, 2014  2:23:58 PM

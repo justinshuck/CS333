@@ -1,0 +1,47 @@
+Script started on Tue, Nov 11, 2014  2:21:41 PM
+[?1034h]0;~/cs333/p6
+[32mjustin@Justin [33m~/cs333/p6[0m
+$ script p7.txt6.txt5.txt[C[C[4Prm[C[C[C[C[C[C[C[C[C[4@script[C[C[C[C[C[C[C4.txt3.txt2.txt1.txt[C[Cgit push origin master[C[C[C[C[C[Ccommit -m 'Finially fixed TestJoin4 by updating my GetANewThread method'[C[C[C[C[C[Cpush origin master[K[C[C[9Pscript p1.txt2.txt3.txt4.txt5.txt[C[C[4Prm[C[C[C[C[C[C[C[C[C[4@script[C[C[C[C[C[C[C6.txt7.txt[C[C[Kmake && blitz -g os
+kpl TestProgram3 -unsafe
+asm TestProgram3.s
+lddd UserRuntime.o UserSystem.o TestProgram3.o -o TestProgram3
+diskUtil -i
+diskUtil -a MyProgram MyProgram
+diskUtil -a TestProgram1 TestProgram1
+diskUtil -a TestProgram2 TestProgram2
+diskUtil -a TestProgram3 TestProgram3
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Disk Driver...
+Initializing File Manager...
+
+JoinTest3 running.
+
+This test involves 5 illegal calls to Sys_Join, waiting on non-existent children.
+In each case, it prints the return code, which should be -1.
+Return code from 1st call = -1
+Return code from 2nd call = -1
+Return code from 3rd call = -1
+Return code from 4th call = -1
+Return code from 5th call = -1
+Done.
+
+*****  A 'wait' instruction was executed and no more interrupts are scheduled... halting emulation!  *****
+
+Done!  The next instruction to execute will be:
+001138: 09000000       ret     
+Number of Disk Reads    = 11
+Number of Disk Writes   = 0
+Instructions Executed   = 3199905
+Time Spent Sleeping     = 9729
+    Total Elapsed Time  = 3209634
+]0;~/cs333/p6
+[32mjustin@Justin [33m~/cs333/p6[0m
+$ exit
+exit
+
+Script done on Tue, Nov 11, 2014  2:21:57 PM

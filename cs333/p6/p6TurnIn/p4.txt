@@ -1,0 +1,168 @@
+Script started on Tue, Nov 11, 2014  2:14:57 PM
+
+justin@Justin ~/cs333/p6
+$ make && blitz -g os
+kpl TestProgram3 -unsafe
+asm TestProgram3.s
+lddd UserRuntime.o UserSystem.o TestProgram3.o -o TestProgram3
+diskUtil -i
+diskUtil -a MyProgram MyProgram
+diskUtil -a TestProgram1 TestProgram1
+diskUtil -a TestProgram2 TestProgram2
+diskUtil -a TestProgram3 TestProgram3
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Disk Driver...
+Initializing File Manager...
+
+ForkTest running.
+
+This test involves calls to Fork, Yield, and Exit.
+There should be 26 columns (A-Z) printed.  Each letter should be printed 5 times.
+A
+A
+A
+ B
+ B
+A
+ B
+ B
+A
+  C
+  C
+ B
+  C
+  C
+   D
+   D
+   D
+  C
+   D
+    E
+    E
+   D
+    E
+    E
+     F
+     F
+    E
+     F
+     F
+      G
+      G
+     F
+      G
+      G
+       H
+       H
+      G
+       H
+       H
+        I
+        I
+       H
+        I
+        I
+         J
+         J
+        I
+         J
+         J
+          K
+          K
+         J
+          K
+          K
+           L
+           L
+          K
+           L
+           L
+            M
+            M
+           L
+            M
+            M
+             N
+             N
+            M
+             N
+             N
+              O
+              O
+             N
+              O
+              O
+               P
+               P
+              O
+               P
+               P
+                Q
+                Q
+               P
+                Q
+                Q
+                 R
+                 R
+                Q
+                 R
+                 R
+                  S
+                  S
+                 R
+                  S
+                  S
+                   T
+                   T
+                  S
+                   T
+                   T
+                    U
+                    U
+                   T
+                    U
+                    U
+                     V
+                     V
+                    U
+                     V
+                     V
+                      W
+                      W
+                     V
+                      W
+                      W
+                       X
+                       X
+                      W
+                       X
+                       X
+                        Y
+                        Y
+                       X
+                        Y
+                        Y
+                         Z
+                         Z
+                        Y
+                         Z
+                         Z
+                         Z
+
+*****  A 'wait' instruction was executed and no more interrupts are scheduled... halting emulation!  *****
+
+Done!  The next instruction to execute will be:
+001138: 09000000       ret     
+Number of Disk Reads    = 11
+Number of Disk Writes   = 0
+Instructions Executed   = 51961662
+Time Spent Sleeping     = 9729
+    Total Elapsed Time  = 51971391
+justin@Justin ~/cs333/p6
+$ exit
+Script done on Tue, Nov 11, 2014  2:15:07 PM

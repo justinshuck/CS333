@@ -1,0 +1,97 @@
+Script started on Tue, Nov 11, 2014  2:22:22 PM
+
+justin@Justin ~/cs333/p6
+$ make && blitz -g os
+kpl TestProgram3 -unsafe
+asm TestProgram3.s
+lddd UserRuntime.o UserSystem.o TestProgram3.o -o TestProgram3
+diskUtil -i
+diskUtil -a MyProgram MyProgram
+diskUtil -a TestProgram1 TestProgram1
+diskUtil -a TestProgram2 TestProgram2
+diskUtil -a TestProgram3 TestProgram3
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Disk Driver...
+Initializing File Manager...
+
+JoinTest4 running.
+
+   This test forks a child process and then waits on it twice.
+   The first call to Sys_Join should return its error code; the
+   second call to Sys_Join should return -1.
+
+The PID of the child = 2
+This should print first.
+This should print second.
+Okay (1).
+Okay (2).
+This should print first.
+The PID of the child = 3
+This should print second.
+Okay (3).
+Okay (4).
+
+   In the next test, we create 2 children, and each creates 2 children,
+   giving 7 processes in all.  Then each process attempts a Sys_Join on
+   every process except its own children, to make sure the result is -1.
+   Finally, each process with children waits on them.
+
+A is running...
+  My first  child is A.B   pid1 = 4
+  My second child is A.C   pid2 = 5
+---------------
+A.B.D is running...
+---------------
+A.C.F is running...
+---------------
+A.C is running...
+  My first  child is A.C.F   pid1 = 7
+  My second child is A.C.G   pid2 = 9
+---------------
+A.C.G is running...
+---------------
+A.B is running...
+  My first  child is A.B.D   pid1 = 6
+  My second child is A.B.E   pid2 = 8
+---------------
+A.B.E is running...
+---------------
+A done with error tests...
+A.C.F done with error tests...
+A.C.G done with error tests...
+A.C done with error tests...
+A.B done with error tests...
+A.B.D done with error tests...
+A.B.E done with error tests...
+-----------------------------------A is waiting on A.B     pid1 = 4
+-----------------------------------A.C is waiting on A.C.F     pid1 = 7
+-----------------------------------A.B is waiting on A.B.D     pid1 = 6
+A.C.F is done.
+-----------------------------------A.C is waiting on A.C.G     pid2 = 9
+A.C.G is done.
+A.C is done.
+A.B.E is done.
+A.B.D is done.
+-----------------------------------A.B is waiting on A.B.E     pid2 = 8
+A.B is done.
+-----------------------------------A is waiting on A.C     pid2 = 5
+A is done.
+
+*****  A 'wait' instruction was executed and no more interrupts are scheduled... halting emulation!  *****
+
+Done!  The next instruction to execute will be:
+001138: 09000000       ret     
+Number of Disk Reads    = 11
+Number of Disk Writes   = 0
+Instructions Executed   = 18123758
+Time Spent Sleeping     = 9729
+    Total Elapsed Time  = 18133487
+
+justin@Justin ~/cs333/p6
+$ exit
+Script done on Tue, Nov 11, 2014  2:22:35 PM
