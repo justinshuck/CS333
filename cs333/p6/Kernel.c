@@ -1978,8 +1978,8 @@ endFunction
         oldUserPC: int
 
       --print("Handle_Sys_Fork invoked! \n")
-      -- Enable Interrupts
-      ignore = SetInterruptsTo(ENABLED)
+      -- Disable Interrupts
+      ignore = SetInterruptsTo(DISABLED)
 
 
       -- Get new thread and PCB and initialize them
@@ -1999,6 +1999,9 @@ endFunction
       -- in the new Thread
       SaveUserRegs(&newThread.userRegs[0])
 
+      -- Re-enable inturrupts
+      ignore = SetInterruptsTo(ENABLED)
+      
       --TODO: Must share OpenFiles with parent
 
       -- We then need to reset the system stack top and

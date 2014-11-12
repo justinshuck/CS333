@@ -915,9 +915,9 @@ _Label_904:
 ! VARIABLE INITIALIZATION...
 ! CALL STATEMENT...
 !   Call the function
-	mov	33,r13		! source line 33
+	mov	35,r13		! source line 35
 	mov	"\0\0CA",r10
-	call	_function_191_JoinTest3
+	call	_function_189_ManyProcessesTest1
 ! CALL STATEMENT...
 !   Call the function
 	mov	38,r13		! source line 38
