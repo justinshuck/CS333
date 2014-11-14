@@ -2168,23 +2168,60 @@ endFunction
     endFunction
 -----------------------------  Handle_Sys_Open  ---------------------------------
   function Handle_Sys_Open (filename: ptr to array of char) returns int
-      -- NOT IMPLEMENTED
+      --  Gets the file name, does verification and sets the
+      --  file in an empty position in the fileDescriptor array.
+      --  Returns the index position in the fileDescriptor array
+
+      --  Implementation:
+      --  1. Copy filename string from virtual space to a small buffer
+      --  2. Make sure the legnth of the name doesnt exceed the max size
+      --  3. Locate an empty slot in fileDescriptor (if none return -1)
+      --  4. Allocate OpenFile obj (return -1 if this fails)
+      --  5. set the entry to point at the open File
+      --  6. return index of the fileDescriptor array
       var
-        stringStorage: array[MAX_STRING_SIZE] of char
         numOfBytes: int
+        stringStorage: array[MAX_STRING_SIZE] of char
+        i: int
+        pcb: ptr to ProcessControlBlock
+        open: ptr to OpenFile
+        holdI: int
+      
+      -- 0. Init variables
+      pcb = currentThread.myProcess
+
+      -- 1. Copy filename into a small buffer
       numOfBytes = currentThread.myProcess.addrSpace.GetStringFromVirtual(&stringStorage, filename asInteger, MAX_STRING_SIZE)
 
-      --Check to see if theres an error when getting string from Virtual
-      if numOfBytes < 0
-          FatalError("ERROR: Error has occured in Handle_Sys_Open")
+      -- 2. make sure the lenth of the name doesnt exceed max (return -1)
+      if stringStorage arraySize > MAX_STRING_SIZE
+          return -1
         endIf
-      --print("Handle_Sys_Open called invoked! \n")
-      --printHexVar("virt addr of filename = ", filename asInteger)
-      --print("filename = ")
-      --printString(&stringStorage)
-      print("\n")
 
-      return 5000
+      -- 3a. locatean empty slot in fileDescriptor
+      -- 4a. Allocate OpenFile obj
+      open = null
+      holdI = -1
+      for i = 0 to MAX_NUMBER_OF_OPEN_FILES-1
+          if pcb.fileDescriptor[i] == null
+              open = fileManager.Open(&stringStorage)
+              holdI = i
+              break
+            endIf
+        endFor
+      
+      -- 3b. Return -1 if an empty slot is not found
+      -- 4b. Return -1 if it fails opening a file
+      if open == null || holdI == -1
+          return -1
+        endIf
+
+      -- 5. Set the entry point at the open file
+      pcb.fileDescriptor[holdI] = open
+
+      -- 6. Return index of the file descriptr array
+      return holdI
+
     endFunction
 -----------------------------  Handle_Sys_Read  ---------------------------------
   function Handle_Sys_Read (fileDesc: int, buffer: ptr to char, sizeInBytes: int) returns int
