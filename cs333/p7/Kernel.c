@@ -1,8 +1,8 @@
 code Kernel
 
   -- Justin Shuck
-  -- CS333 Proj 6
-  -- Due: 11/13/2014
+  -- CS333 Proj 7
+  -- Due: 11/20/2014
 
 -----------------------------  InitializeScheduler  ---------------------------------
 
@@ -1120,6 +1120,8 @@ code Kernel
       var
         proc: ptr to ProcessControlBlock
         ignore: int
+        i: int
+        open: ptr to OpenFile
 
       -- Save exitStatus
       currentThread.myProcess.exitStatus = exitStatus
@@ -1133,7 +1135,15 @@ code Kernel
       proc.myThread = null
       currentThread.isUserThread = false
 
-      -- Close any open files (FOR NEXT PROJECT)
+      -- Close any open files
+      -- ############# NEW CODE #################
+      for i = 0 to MAX_FILES_PER_PROCESS-1
+          open = proc.fileDescriptor[i]
+          if open != null
+              fileManager.Close(open)
+            endIf
+        endFor
+      -- ############# NEW CODE #################
 
       --Re-enable interrupts
       ignore = SetInterruptsTo(ENABLED)
@@ -1154,7 +1164,7 @@ function InitFirstProcess()
 
   ptrThread = threadManager.GetANewThread()
   ptrThread.Init("UserProgramThread")
-  ptrThread.Fork(StartUserProcess, "TestProgram3" asInteger)
+  ptrThread.Fork(StartUserProcess, "TestProgram4" asInteger)
 
 endFunction
 
@@ -1183,10 +1193,10 @@ function StartUserProcess(arg : int)
     currentThread.myProcess = ptrToPCB
 
     -- Open the executable (hard coded)
-    ptrOpenFile = fileManager.Open("TestProgram3")
+    ptrOpenFile = fileManager.Open("TestProgram4")
 
     if ptrOpenFile == null
-        FatalError("ERROR: Cannot open 'TestProgram3'.")
+        FatalError("ERROR: Cannot open 'TestProgram4'.")
       endIf
 
     -- create the LogicalAddress space using 'LoadExecutable'
@@ -2001,7 +2011,17 @@ endFunction
       -- Re-enable inturrupts
       ignore = SetInterruptsTo(ENABLED)
       
-      --TODO: Must share OpenFiles with parent
+      -- Share open files with parent
+      -- ############# NEW CODE #################
+      fileManager.fileManagerLock.Lock()
+      for i = 0 to MAX_NUMBER_OF_OPEN_FILES-1
+          newPCB.fileDescriptor[i] = oldPCB.fileDescriptor[i]
+          if newPCB.fileDescriptor[i] != null
+              newPCB.fileDescriptor[i].numberOfUsers = newPCB.fileDescriptor[i].numberOfUsers + 1
+            endIf
+        endFor
+      fileManager.fileManagerLock.Unlock()
+      -- ############# NEW CODE #################
 
       -- We then need to reset the system stack top and
       --ensure that no other threads will touch our user/new stack.

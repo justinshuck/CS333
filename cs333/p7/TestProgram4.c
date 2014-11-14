@@ -23,7 +23,7 @@ code TestProgram4
     --     USER_STACK_SIZE_IN_PAGES = 1
     --     NUMBER_OF_ENVIRONMENT_PAGES = 0
 
-      -- OpenTest1 ()
+       OpenTest1 ()
       -- OpenTest2 ()
       -- OpenCloseTest ()
       -- CloseTest ()
