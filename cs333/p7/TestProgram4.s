@@ -21935,9 +21935,9 @@ _Label_1996:
 ! VARIABLE INITIALIZATION...
 ! CALL STATEMENT...
 !   Call the function
-	mov	27,r13		! source line 27
+	mov	26,r13		! source line 26
 	mov	"\0\0CA",r10
-	call	_function_429_OpenTest2
+	call	_function_430_OpenTest1
 ! CALL STATEMENT...
 !   Prepare Argument: offset=8  value=0  sizeInBytes=4
 	mov	0,r1

@@ -2096,7 +2096,7 @@ endFunction
       -- We then need to copy the characters into an array variable (use MAX_STRING_SIZE)
 
       var
-        ptrOpenFile2: ptr to OpenFile
+        ptrOpenFile: ptr to OpenFile
         newAddrSpace: AddrSpace = new AddrSpace
         stringStorage: array[MAX_STRING_SIZE] of char
         ptrToPCB: ptr to ProcessControlBlock
@@ -2119,27 +2119,26 @@ endFunction
       endIf
 
     -- Open the executable 
-    ptrOpenFile2 = fileManager.Open(&stringStorage)
-    if ptrOpenFile2 == null
+    ptrOpenFile = fileManager.Open(&stringStorage)
+    if ptrOpenFile == null
         return -1
       endIf
-
 
     -- create the LogicalAddress space using 'LoadExecutable'
     -- And make sure to close the executable (otherwise a syste
     -- recourse will become permanently locked up)
     -- Check to see if there was an error loading a program into
     -- memory
-    initPC = ptrOpenFile2.LoadExecutable(& newAddrSpace)
+    initPC = ptrOpenFile.LoadExecutable(& newAddrSpace)
     if initPC < 0
         return -1
       endIf
-
+   
     -- Compute the initial value(# of pages * Page size) and then jump into the
     -- user-level program
     ptrToPCB.addrSpace = newAddrSpace
-    fileManager.Close(ptrOpenFile2)
-    frameManager.ReturnAllFrames(& currentThread.myProcess.addrSpace)
+    fileManager.Close(ptrOpenFile)
+    --frameManager.ReturnAllFrames(& currentThread.myProcess.addrSpace)
     initUserStackTop = (newAddrSpace.numberOfPages * PAGE_SIZE)
     ptrInitSystemStackTop = & currentThread.systemStack[SYSTEM_STACK_SIZE-1]
     previousStatus = SetInterruptsTo(DISABLED)
@@ -2186,12 +2185,12 @@ endFunction
         pcb: ptr to ProcessControlBlock
         open: ptr to OpenFile
         holdI: int
-      
+  
       -- 0. Init variables
       pcb = currentThread.myProcess
 
       -- 1. Copy filename into a small buffer
-      numOfBytes = currentThread.myProcess.addrSpace.GetStringFromVirtual(&stringStorage, filename asInteger, MAX_STRING_SIZE)
+      numOfBytes = pcb.addrSpace.GetStringFromVirtual(&stringStorage, filename asInteger, MAX_STRING_SIZE)
 
       -- 2. make sure the lenth of the name doesnt exceed max (return -1)
       if stringStorage arraySize > MAX_STRING_SIZE
@@ -2202,14 +2201,15 @@ endFunction
       -- 4a. Allocate OpenFile obj
       open = null
       holdI = -1
-      for i = 0 to MAX_NUMBER_OF_OPEN_FILES-1
-          if pcb.fileDescriptor[i] == null
-              open = fileManager.Open(&stringStorage)
-              holdI = i
-              break
-            endIf
-        endFor
-      
+      for i = 0 to MAX_FILES_PER_PROCESS - 1
+        if pcb.fileDescriptor[i] == null
+          holdI = i
+          break
+        endIf
+      endFor
+
+      open = fileManager.Open(&stringStorage)
+
       -- 3b. Return -1 if an empty slot is not found
       -- 4b. Return -1 if it fails opening a file
       if open == null || holdI == -1
@@ -2233,8 +2233,94 @@ endFunction
       --print("\nsizeInBytes = ")
       --printInt(sizeInBytes)
       --print("\n")
+      var
+        open: ptr to OpenFile
+        virtAddr: int
+        virtPage: int
+        offset: int
+        copiedSoFar: int
+        nextPosInFile: int
+        thisChunksize: int
+        sizeOfFile: int
+        hold: bool
+        destAddr: int
 
-      return 6000
+      -- Begin by checking fileDesc
+      if fileDesc >= MAX_NUMBER_OF_OPEN_FILES || fileDesc < 0
+          return -1
+        endIf
+
+      -- Check to see if sizeInBytes is negative
+      if sizeInBytes < 0
+          return -1
+        endIf
+
+      --Get the OpenFile
+      open = currentThread.myProcess.fileDescriptor[fileDesc]
+      if open == null
+          return -1
+        endIf
+
+      virtAddr = buffer asInteger
+      virtPage = virtAddr / PAGE_SIZE
+      offset = virtAddr % PAGE_SIZE
+      copiedSoFar = 0
+      nextPosInFile = open.currentPos
+      sizeOfFile = open.fcb.sizeOfFileInBytes
+
+      -- Each iteration will compute the size of the next chunk and process it
+      while true
+          --compute size of chunk
+          thisChunksize = PAGE_SIZE - offset
+
+          if nextPosInFile + thisChunksize > sizeOfFile
+              thisChunksize = sizeOfFile - nextPosInFile
+            endIf
+
+          if copiedSoFar + thisChunksize > sizeInBytes
+              thisChunksize = sizeInBytes - copiedSoFar
+            endIf
+
+
+          -- Check to see if we're done
+          if thisChunksize <= 0
+              break
+            endIf
+
+          -- check for various errors
+          if virtPage < 0 ||  virtPage > NUMBER_OF_PHYSICAL_PAGE_FRAMES || !currentThread.myProcess.addrSpace.IsValid(virtPage) || !currentThread.myProcess.addrSpace.IsWritable(virtPage)
+            return -1
+            endIf
+
+          --Do the read:
+          --Set dirtyBit for this page
+          currentThread.myProcess.addrSpace.SetDirty(virtPage)
+          --set referencedBit for this page
+          currentThread.myProcess.addrSpace.SetReferenced(virtPage)
+
+          destAddr = currentThread.myProcess.addrSpace.ExtractFrameAddr(virtPage) + offset
+          if destAddr == 0
+              return copiedSoFar
+            endIf
+
+          -- Perform read into destAddr(with next postion in file and chunksize)
+          hold = fileManager.SynchRead(open, destAddr, nextPosInFile,thisChunksize)
+
+          -- Increment
+          nextPosInFile = nextPosInFile + thisChunksize
+          open.currentPos = nextPosInFile
+          copiedSoFar = copiedSoFar + thisChunksize
+          virtPage = virtPage + 1
+          offset = 0
+
+          -- Check to see if we're done
+          if copiedSoFar == sizeInBytes
+              break
+            endIf
+
+        endWhile
+
+      return copiedSoFar
     endFunction
 -----------------------------  Handle_Sys_Write  ---------------------------------
   function Handle_Sys_Write (fileDesc: int, buffer: ptr to char, sizeInBytes: int) returns int
@@ -2247,7 +2333,92 @@ endFunction
       --print("\nsizeInBytes = ")
       --printInt(sizeInBytes)
       --print("\n")
-      return 7000
+        var
+        open: ptr to OpenFile
+        virtAddr: int
+        virtPage: int
+        offset: int
+        copiedSoFar: int
+        nextPosInFile: int
+        thisChunksize: int
+        sizeOfFile: int
+        hold: bool
+        destAddr: int
+
+      -- Begin by checking fileDesc
+      if fileDesc >= MAX_NUMBER_OF_OPEN_FILES || fileDesc < 0
+          return -1
+        endIf
+
+      -- Check to see if sizeInBytes is negative
+      if sizeInBytes < 0
+          return -1
+        endIf
+
+      --Get the OpenFile
+      open = currentThread.myProcess.fileDescriptor[fileDesc]
+      if open == null
+          return -1
+        endIf
+
+      virtAddr = buffer asInteger
+      virtPage = virtAddr / PAGE_SIZE
+      offset = virtAddr % PAGE_SIZE
+      copiedSoFar = 0
+      nextPosInFile = open.currentPos
+      sizeOfFile = open.fcb.sizeOfFileInBytes
+
+      -- Each iteration will compute the size of the next chunk and process it
+      while true
+          --compute size of chunk
+          thisChunksize = PAGE_SIZE - offset
+
+          if nextPosInFile + thisChunksize > sizeOfFile
+              thisChunksize = sizeOfFile - nextPosInFile
+            endIf
+
+          if copiedSoFar + thisChunksize > sizeInBytes
+              thisChunksize = sizeInBytes - copiedSoFar
+            endIf
+
+
+          -- Check to see if we're done
+          if thisChunksize <= 0
+              break
+            endIf
+
+          -- check for various errors
+          if virtPage < 0 ||  virtPage > NUMBER_OF_PHYSICAL_PAGE_FRAMES || !currentThread.myProcess.addrSpace.IsValid(virtPage) || !currentThread.myProcess.addrSpace.IsWritable(virtPage)
+            return -1
+            endIf
+
+          --Do the write:
+          --set referencedBit for this page
+          currentThread.myProcess.addrSpace.SetReferenced(virtPage)
+
+          destAddr = currentThread.myProcess.addrSpace.ExtractFrameAddr(virtPage) + offset
+          if destAddr == 0
+              return copiedSoFar
+            endIf
+
+          -- Perform read into destAddr(with next postion in file and chunksize)
+          --fileManager.fileManagerLock.Unlock()
+          hold = fileManager.SynchWrite(open, destAddr, nextPosInFile,thisChunksize)  --I
+
+          -- Increment
+          nextPosInFile = nextPosInFile + thisChunksize
+          open.currentPos = nextPosInFile
+          copiedSoFar = copiedSoFar + thisChunksize
+          virtPage = virtPage + 1
+          offset = 0
+
+          -- Check to see if we're done
+          if copiedSoFar == sizeInBytes
+              break
+            endIf
+
+        endWhile
+      return copiedSoFar
     endFunction
 -----------------------------  Handle_Sys_Seek  ---------------------------------
   function Handle_Sys_Seek (fileDesc: int, newCurrentPos: int) returns int
@@ -2258,14 +2429,94 @@ endFunction
      -- print("\nnewCurrentPos = ")
       --printInt(newCurrentPos)
       --print("\n")
-      return 8000
+      -- Implementation:
+      --    1. Lock the FileManager
+      --    2. Check fileDesc and get a pointer to the Open File
+      --    3. Make sure the file is open (null entry == not open)
+      --    4. Deal with new curPos == -1
+      --    5. Deal with new curPos < -1 (Zero is okay)
+      --    6. Deal with new curPos > filesize
+      --    7. Update currentPos
+      --    8. return new curPos
+      
+      var
+        pcb: ptr to ProcessControlBlock
+        open: ptr to OpenFile
+
+
+      -- 0. Initilize
+      pcb = currentThread.myProcess
+
+      -- 1. Lock the FileManager
+      fileManager.fileManagerLock.Lock()
+
+      -- 2. Check fileDesc and get a pointer to the open File
+      /*for i = 0 to MAX_FILES_PER_PROCESS - 1
+        if pcb.fileDescriptor[i] == null
+          open = pcb.fileDescriptor[i]
+          break
+        endIf
+      endFor*/
+      if fileDesc > MAX_FILES_PER_PROCESS || fileDesc < 0
+          fileManager.fileManagerLock.Unlock()
+          return -1
+        endIf
+      open = pcb.fileDescriptor[fileDesc]
+      if open == null
+          fileManager.fileManagerLock.Unlock()
+          return -1
+        endIf
+
+      -- 3. Make sure the file is open
+      if open.fcb == null
+          fileManager.fileManagerLock.Unlock()
+          return -1
+        endIf
+
+      -- 4.  Deal with new Current Position being -1
+      if newCurrentPos == -1
+          newCurrentPos = open.fcb.sizeOfFileInBytes
+        endIf
+
+      --5. Deal with new current Position being < -1
+      --6. Deal with new current Position being > filesize
+      if newCurrentPos < -1 || newCurrentPos > open.fcb.sizeOfFileInBytes
+          fileManager.fileManagerLock.Unlock()
+          return -1
+        endIf
+
+      --7. update currentPos
+      open.currentPos = newCurrentPos
+
+      --8. return new curPos
+      fileManager.fileManagerLock.Unlock()
+      return newCurrentPos
     endFunction
 -----------------------------  Handle_Sys_Close  ---------------------------------
   function Handle_Sys_Close (fileDesc: int)
+      -- Check the argument (is it a legal array index/ point to an open file)
       --print("Handle_Sys_Close invoked!\n") 
       --print("fileDes = ")
       --printInt(fileDesc)
       --print(".\n")
+      var
+        open: ptr to OpenFile
+
+      -- Check to see if the index passed in is valid.
+      -- Can't be greater than or equal to MAX OR less than 0
+      if fileDesc >= MAX_NUMBER_OF_OPEN_FILES || fileDesc < 0
+          return
+        endIf
+
+      open = currentThread.myProcess.fileDescriptor[fileDesc]
+      currentThread.myProcess.fileDescriptor[fileDesc] = null
+
+      --Make sure the file was really open. Return if can't find file
+      if open == null
+          return
+        endIf
+
+      fileManager.Close(open)
     endFunction
 -----------------------------  printString  ---------------------------------
 
