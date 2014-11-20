@@ -1,0 +1,61 @@
+justin@Justin ~/cs333/p7
+$ make && blitz -g os
+kpl TestProgram4 -unsafe
+asm TestProgram4.s
+lddd UserRuntime.o UserSystem.o TestProgram4.o -o TestProgram4
+diskUtil -i
+diskUtil -a file1 file1
+diskUtil -a MyProgram MyProgram
+diskUtil -a TestProgram1 TestProgram1
+diskUtil -a TestProgram2 TestProgram2
+diskUtil -a TestProgram3 TestProgram3
+diskUtil -a TestProgram4 TestProgram4
+diskUtil -a file2 file2
+diskUtil -a file3 file3
+diskUtil -a file1234abcd file1234abcd
+diskUtil -a Program1 Program1
+diskUtil -a Program2 Program2
+diskUtil -a FileWithVeryLongName012345678901234567890123456789 \
+		FileWithVeryLongName012345678901234567890123456789
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Disk Driver...
+Initializing File Manager...
+
+**********  WriteTest4 running  **********
+
+Writing "abcdefghijklmnopqrstuvwxyz" to position 0 in file...
+Okay
+Checking that the file contains "abcdefghijklmnopqrstuvwxyz" at position 0...
+Okay.
+Writing "0123" to current position...
+Okay
+Writing "ABC" to current position...
+Okay
+Writing "4567" to current position...
+Okay
+Writing "DEF" to current position...
+Okay
+Writing "89" to current position...
+Okay
+Writing "GHI" to current position...
+Okay
+Checking that the file contains "abc0123ABC4567DEF89GHIwxyz" at position 0...
+Okay.
+
+**********  Test Complete  **********
+
+
+*****  A 'wait' instruction was executed and no more interrupts are scheduled... halting emulation!  *****
+
+Done!  The next instruction to execute will be:
+001138: 09000000       ret     
+Number of Disk Reads    = 19
+Number of Disk Writes   = 4
+Instructions Executed   = 4810537
+Time Spent Sleeping     = 29083
+    Total Elapsed Time  = 4839620

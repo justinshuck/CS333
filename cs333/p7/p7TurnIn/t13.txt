@@ -1,6 +1,4 @@
-Script started on Wed, Nov 19, 2014  7:59:28 PM
-[?1034h]0;~/cs333/p7
-[32mjustin@Justin [33m~/cs333/p7[0m
+justin@Justin ~/cs333/p7
 $ make && blitz -g os
 kpl TestProgram4 -unsafe
 asm TestProgram4.s
@@ -28,14 +26,41 @@ AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
 Initializing Disk Driver...
 Initializing File Manager...
 
-**********  OpenTest1 running  **********
+**********  ReadTest3 running  **********
 
-Attempting to open a nonexistent file, which should return -1.
-Okay.
-Attempting to open a file with an overly large name, which should return -1.
-Okay.
-Attempting to open an existing file, which should succeed.
-Okay.
+Should print 9 lines with the characters 'Now is th'.
+Each line should contain only one character.
+N--------
+-o-------
+--w------
+--- -----
+----i----
+-----s---
+------ --
+-------t-
+--------h
+Should print 9 lines with the characters 'e time fo'.
+Each line should contain only one character.
+e--------
+- -------
+--t------
+---i-----
+----m----
+-----e---
+------ --
+-------f-
+--------o
+Should print 9 lines with the characters 'r all goo'.
+Each line should contain only one character.
+r--------
+- -------
+--a------
+---l-----
+----l----
+----- ---
+------g--
+-------o-
+--------o
 
 **********  Test Complete  **********
 
@@ -44,14 +69,8 @@ Okay.
 
 Done!  The next instruction to execute will be:
 001138: 09000000       ret     
-Number of Disk Reads    = 18
+Number of Disk Reads    = 19
 Number of Disk Writes   = 0
-Instructions Executed   = 3427562
-Time Spent Sleeping     = 18804
-    Total Elapsed Time  = 3446366
-]0;~/cs333/p7
-[32mjustin@Justin [33m~/cs333/p7[0m
-$ exit
-exit
-
-Script done on Wed, Nov 19, 2014  7:59:38 PM
+Instructions Executed   = 15606100
+Time Spent Sleeping     = 47482
+    Total Elapsed Time  = 15653582
