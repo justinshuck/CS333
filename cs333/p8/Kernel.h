@@ -25,6 +25,10 @@ header Kernel
 
     SERIAL_GET_BUFFER_SIZE = 10
     SERIAL_PUT_BUFFER_SIZE = 10
+    SERIAL_CHARACTER_AVAILABLE_BIT = 0x00000001
+    SERIAL_OUTPUT_READY_BIT = 0x00000002
+    SERIAL_STATUS_WORD_ADDRESS = 0x00FFFF00
+    SERIAL_DATA_WORD_ADDRESS = 0x00FFFF04
 
   enum JUST_CREATED, READY, RUNNING, BLOCKED, UNUSED      -- Thread status
   enum ENABLED, DISABLED                                  -- Interrupt status
@@ -57,11 +61,13 @@ header Kernel
     processManager: ProcessManager
     threadManager: ThreadManager
     frameManager: FrameManager
-    -- ############   NEW code   ############
     diskDriver: DiskDriver
-    --serialDriver: SerialDriver
-    fileManager: FileManager
     -- ############   NEW code   ############
+    serialDriver: SerialDriver
+    serialHasBeenInitialized: bool
+    -- ############   NEW code   ############
+    fileManager: FileManager
+  
 
   functions
 
@@ -103,9 +109,8 @@ header Kernel
     FatalError_ThreadVersion (errorMessage: ptr to array of char)
     SetInterruptsTo (newStatus: int) returns int
     ProcessFinish (exitStatus: int)
-    -- ############   NEW code   ############
     InitFirstProcess ()
-    -- ############   NEW code   ############
+
     -- Routines from Switch.s:
 
     external Switch (prevThread, nextThread: ptr to Thread)
@@ -383,5 +388,36 @@ header Kernel
       ReadBytes (targetAddr, numBytes: int) returns bool        -- true=All Okay
       ReadInt () returns int
       LoadExecutable (addrSpace: ptr to AddrSpace) returns int  -- -1 = problems
+  endClass
+
+
+------------------------ SerialDriver ----------------------------
+--
+-- There is only one instance of this class.
+--
+
+class SerialDriver
+  superclass Object
+  fields
+    serial_status_word_address: ptr to int
+    serial_data_word_address: ptr to int
+    serialLock: Mutex
+    getBuffer: array [SERIAL_GET_BUFFER_SIZE] of char
+    getBufferSize: int
+    getBufferNextIn: int
+    getBufferNextOut: int
+    getCharacterAvail: Condition
+    putBuffer: array [SERIAL_PUT_BUFFER_SIZE] of char
+    putBufferSize: int
+    putBufferNextIn: int
+    putBufferNextOut: int
+    putBufferSem: Semaphore
+    serialNeedsAttention: Semaphore
+    serialHandlerThread: Thread
+  methods
+    Init ()
+    PutChar (value: char)
+    GetChar () returns char
+    SerialHandler ()
   endClass
 endHeader

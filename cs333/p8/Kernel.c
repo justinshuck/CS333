@@ -1,8 +1,8 @@
 code Kernel
 
   -- Justin Shuck
-  -- CS333 Proj 7
-  -- Due: 11/20/2014
+  -- CS333 Proj 8
+  -- Due: 12/3/2014
 
 -----------------------------  InitializeScheduler  ---------------------------------
 
@@ -3422,4 +3422,24 @@ function ResumeChildAfterFork(initPC: int)
 
   endBehavior
 
+    ------------------------ SerialDriver ----------------------------
+  behavior SerialDriver
+
+    --------------------- SerialDriver . Init() -------------------
+    method Init()
+    endMethod
+
+    --------------------- SerialDriver . Put Char() ---------------
+    method PutChar(value: char)
+    endMethod
+
+    --------------------- SerialDriver . GetChar() ----------------
+    method GetChar() returns char
+    return 'a'
+    endMethod
+
+    --------------------- SerialDriver . SerialHandler() ----------
+    method SerialHandler()
+    endMethod
+  endBehavior
 endCode
