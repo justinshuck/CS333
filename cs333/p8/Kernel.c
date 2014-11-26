@@ -1164,7 +1164,7 @@ function InitFirstProcess()
 
   ptrThread = threadManager.GetANewThread()
   ptrThread.Init("UserProgramThread")
-  ptrThread.Fork(StartUserProcess, "TestProgram4" asInteger)
+  ptrThread.Fork(StartUserProcess, "TestProgram5" asInteger)
 
 endFunction
 
@@ -1193,10 +1193,10 @@ function StartUserProcess(arg : int)
     currentThread.myProcess = ptrToPCB
 
     -- Open the executable (hard coded)
-    ptrOpenFile = fileManager.Open("TestProgram4")
+    ptrOpenFile = fileManager.Open("TestProgram5")
 
     if ptrOpenFile == null
-        FatalError("ERROR: Cannot open 'TestProgram4'.")
+        FatalError("ERROR: Cannot open 'TestProgram5'.")
       endIf
 
     -- create the LogicalAddress space using 'LoadExecutable'
@@ -1776,7 +1776,9 @@ endFunction
     -- for the duration of its execution.
     --
       currentInterruptStatus = DISABLED
-      -- NOT IMPLEMENTED
+      if serialHasBeenInitialized
+          serialDriver.serialNeedsAttention.Up()
+        endIf
     endFunction
 -----------------------------  IllegalInstructionHandler  --------------------------
 
@@ -2203,6 +2205,13 @@ endFunction
       holdI = -1
       for i = 0 to MAX_FILES_PER_PROCESS - 1
         if pcb.fileDescriptor[i] == null
+          -- ########## NEW CODE ##########
+          -- Check for terminal, else do normal execution
+          if StrEqual(&stringStorage, "terminal")
+              pcb.fileDescriptor[i] = &fileManager.serialTerminalFile
+              return i
+           endIf
+          -- ########## NEW CODE ##########
           holdI = i
           break
         endIf
@@ -2217,7 +2226,8 @@ endFunction
         endIf
 
       -- 5. Set the entry point at the open file
-      pcb.fileDescriptor[holdI] = open
+      --pcb.fileDescriptor[holdI] = open
+      pcb.fileDescriptor[i].kind = FILE
 
       -- 6. Return index of the file descriptr array
       return holdI
@@ -3422,24 +3432,109 @@ function ResumeChildAfterFork(initPC: int)
 
   endBehavior
 
-    ------------------------ SerialDriver ----------------------------
+  ------------------------ SerialDriver ----------------------------
   behavior SerialDriver
 
     --------------------- SerialDriver . Init() -------------------
     method Init()
+        -- Initialize method for Serial Driver
+
+        print( "Initializing Serial Driver...")
+
+        *serial_status_word_address = SERIAL_STATUS_WORD_ADDRESS
+        *serial_data_word_address = SERIAL_DATA_WORD_ADDRESS
+
+        serialLock = new Mutex
+        serialLock.Init()
+
+        getBuffer = new array of char { SERIAL_GET_BUFFER_SIZE of ' ' }
+        getBufferSize = 0
+        getBufferNextIn = 0
+        getBufferNextOut = 0 
+        getCharacterAvail = new Condition
+        getCharacterAvail.Init()
+
+        putBuffer = new array of char { SERIAL_PUT_BUFFER_SIZE of ' ' }
+        putBufferSize = 0
+        putBufferNextIn = 0
+        putBufferNextOut = 0
+        putBufferSem = new Semaphore
+        putBufferSem.Init(SERIAL_PUT_BUFFER_SIZE)
+
+        serialNeedsAttention = new Semaphore
+        serialNeedsAttention.Init(0)
+
+        serialHasBeenInitialized = true
     endMethod
 
     --------------------- SerialDriver . Put Char() ---------------
     method PutChar(value: char)
+        --Put a character onto the PutBuffer queue
+        -- If the buffer is full, this method will block.
+        -- Otherwise return immediately after buffering the character
+        -- This will not wait for the I/O to complete
+
+        putBufferSem.Down()
+
+        -- Aquire SerialLock
+        serialDriver.serialLock.Unlock()
+
+        -- Add character to the next "in spot"
+        putBuffer[putBufferNextIn] = value
+
+        --Adjust putBufferNextIn and BufferSize
+        putBufferNextIn = putBufferNextIn + 1
+        putBufferSize = putBufferSize + 1
+
+        --Release the lock
+        serialLock.Lock()
     endMethod
 
     --------------------- SerialDriver . GetChar() ----------------
     method GetChar() returns char
-    return 'a'
+        -- Get a character from the GetBuffer queue.
+        -- If the queue is empty, this will block and wait for the 
+        -- user to type a character.
+
+        var
+          tmpChar: char
+
+        -- Aquire SerialLock
+        serialLock.Unlock()
+
+        -- if getBufferSize == 0, we must wait on getCharacterAvail
+        while getBufferSize == 0
+            getCharacterAvail.Wait(& serialLock)
+          endWhile
+
+        -- Hold character before adjusting values
+        tmpChar = getBuffer[getBufferNextOut]
+        -- Adjust getBufferNextOut and getBufferSize
+        getBufferNextOut = getBufferNextOut + 1
+        getBufferSize = getBufferSize - 1
+
+        -- Release SerialLock & signal serialNeedsAttention
+        serialDriver.serialLock.Lock()
+        serialDriver.serialNeedsAttention.Up ()
+
+        --Return character
+        return tmpChar
     endMethod
 
     --------------------- SerialDriver . SerialHandler() ----------
     method SerialHandler()
+        -- Everytime a device interrupts the CPU, this will be awakened
+        -- everytime a character is put in the buffer this will be awakened
+        -- (1) If a new character has been recieved, the new character must be feteched
+        -- from the device and moved to the getBuffer
+        -- (2) If the serial transsmission channel is free and there are more characters
+        -- waiting in putBuffer to be printed, the outputting must be started
+        -- (3) If other threads wait on getBuffer (becoming non-empty) and putPuffer (becoming non-full)
+
+        -- Infinite loop 
+        while true
+
+        endWhile
     endMethod
   endBehavior
 endCode

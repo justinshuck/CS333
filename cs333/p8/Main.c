@@ -27,6 +27,10 @@ code Main
       -- Call this function to more completely exercise the kernel code
       AllocateRandomFrames ()
 
+      -- Initialize the SerialDriver
+      serialDriver = new SerialDriver
+      serialDriver.Init ()
+      
       -- Initialize the DiskDriver
       diskDriver = new DiskDriver
       diskDriver.Init ()
