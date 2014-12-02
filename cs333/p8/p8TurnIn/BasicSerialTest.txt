@@ -1,0 +1,68 @@
+Script started on Sun, Nov 30, 2014 11:20:02 PM
+
+justin@Justin ~/cs333/p8
+$ make && blitz -g os -wait -raw
+make: Nothing to be done for 'all'.
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Serial Driver...Initializing Disk Driver...
+Initializing File Manager...
+Opening 'stdin' and 'stdout'...
+Okay.
+Okay.
+This menu works best in raw mode.
+
+====================  MENU  ====================
+  1  -  BasicSerialTest
+  2  -  KeyTest
+  3  -  EchoTest
+  4  -  LineEchoTest
+  5  -  EOFTest
+  6  -  OpenCloseTerminalTest
+  7  -  TerminalErrorTest
+  8  -  Shell
+  9  -  Quit
+Please select by number: 1
+
+==========  BasicSerialTest  ==========
+
+This test should be run in raw mode.
+
+Hit the "a" key.  Do not hit ENTER or RETURN...
+Returned value is correct.
+The buffer was updated correctly.
+
+Please type "abc".  Do not hit ENTER or RETURN...
+Returned value is correct.
+The buffer was updated correctly.
+
+Please type "hello".  Do not hit ENTER or RETURN...
+Returned value is correct.
+Returned value is correct.
+The buffer was updated correctly.
+
+Please type control-J.  Do not hit ENTER or RETURN...
+Returned value is correct.
+The buffer was updated correctly.
+
+Please type control-M.  Do not hit ENTER or RETURN...
+Returned value is correct.
+The buffer was updated correctly.
+
+Please type control-H.  Do not hit ENTER or RETURN...
+Returned value is correct.
+The buffer was updated correctly.
+
+Please type control-D.  Do not hit ENTER or RETURN...
+Returned value is correct.
+The buffer was not modified, as expected.
+
+==========  Test Complete  ==========
+
+justin@Justin ~/cs333/p8
+$ exit
+Script done on Sun, Nov 30, 2014 11:20:31 PM

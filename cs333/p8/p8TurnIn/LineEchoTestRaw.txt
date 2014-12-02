@@ -1,0 +1,65 @@
+Script started on Mon, Dec  1, 2014  6:59:18 PM
+
+justin@Justin ~/cs333/p8
+$ blitz -g os -wait -raw
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Serial Driver...Initializing Disk Driver...
+Initializing File Manager...
+Opening 'stdin' and 'stdout'...
+Okay.
+Okay.
+This menu works best in raw mode.
+
+====================  MENU  ====================
+  1  -  BasicSerialTest
+  2  -  KeyTest
+  3  -  EchoTest
+  4  -  LineEchoTest
+  5  -  EOFTest
+  6  -  OpenCloseTerminalTest
+  7  -  TerminalErrorTest
+  8  -  Shell
+  9  -  Quit
+Please select by number: 4
+
+==========  LineEchoTest  ==========
+
+This program reads an entire line of input (up to 30 characters) into a buffer.
+After this program gets the entire line, it prints it.  Since this program
+does not echo characters as typed, you will not see the characters until after
+the entire line is completed by typing ENTER, when running the emulator in raw
+mode.  In cooked mode, the host (Unix) will echo characters and then, after the
+line is complete, this program will (re) print the line.
+
+  1. Start by typing "abc\n"
+  2. See what happens with characters like cntl-H (Backspace), cntl-J (NL) and cntl-M (CR).
+  3. See what happens when you hit keys labelled SPACE, ENTER/RETURN, TAB, DEL/BACKSPACE, and ESC.
+  4. See what happens when you hit cntl-D (EOF).
+  5. See what happens when the size of the buffer is exceeded.
+  6. In cooked mode, see how the host (Unix) processes editing keys, such as backspace.
+
+This test will terminate when the first character entered is 'q'.
+
+(To change to cooked mode, type control-C, "cooked", and "g" to resume execution.
+To change to raw mode, type control-C, ENTER, ENTER, "raw", and "g" to resume execution.)
+
+
+Number of characters entered = 6
+abcde
+
+Number of characters entered = 12
+hello there
+
+Number of characters entered = 2
+q
+
+==========  Test Complete  ==========
+
+justin@Justin ~/cs333/p8
+$ exit
+Script done on Mon, Dec  1, 2014  7:00:13 PM

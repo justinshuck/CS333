@@ -1004,7 +1004,7 @@ code Kernel
         processManagerLock.Unlock()
 
         endMethod
-      -- #################   NEW CODE  ######################
+
       ----------  ProcessManager . TurnIntoZombie  ----------
 
       method TurnIntoZombie (p: ptr to ProcessControlBlock)
@@ -1095,7 +1095,6 @@ code Kernel
           return exitStatusToReturn
 
         endMethod
-      -- #################   NEW CODE  ######################
 
     endBehavior
 
@@ -1136,14 +1135,12 @@ code Kernel
       currentThread.isUserThread = false
 
       -- Close any open files
-      -- ############# NEW CODE #################
       for i = 0 to MAX_FILES_PER_PROCESS-1
           open = proc.fileDescriptor[i]
           if open != null
               fileManager.Close(open)
             endIf
         endFor
-      -- ############# NEW CODE #################
 
       --Re-enable interrupts
       ignore = SetInterruptsTo(ENABLED)
@@ -1165,6 +1162,7 @@ function InitFirstProcess()
   ptrThread = threadManager.GetANewThread()
   ptrThread.Init("UserProgramThread")
   ptrThread.Fork(StartUserProcess, "TestProgram5" asInteger)
+
 
 endFunction
 
@@ -2014,7 +2012,6 @@ endFunction
       ignore = SetInterruptsTo(ENABLED)
       
       -- Share open files with parent
-      -- ############# NEW CODE #################
       fileManager.fileManagerLock.Lock()
       for i = 0 to MAX_NUMBER_OF_OPEN_FILES-1
           newPCB.fileDescriptor[i] = oldPCB.fileDescriptor[i]
@@ -2023,7 +2020,6 @@ endFunction
             endIf
         endFor
       fileManager.fileManagerLock.Unlock()
-      -- ############# NEW CODE #################
 
       -- We then need to reset the system stack top and
       --ensure that no other threads will touch our user/new stack.
@@ -2052,7 +2048,6 @@ endFunction
       newThread.Fork(ResumeChildAfterFork, oldUserPC)
       return newPCB.pid
     endFunction
-    -- ############   NEW code   ############
 
 -----------------------------  Handle_Sys_Join  ---------------------------------
   function Handle_Sys_Join (processID: int) returns int
@@ -2209,28 +2204,21 @@ endFunction
           -- Check for terminal, else do normal execution
           if StrEqual(&stringStorage, "terminal")
               pcb.fileDescriptor[i] = &fileManager.serialTerminalFile
-              return i
+          else
+              pcb.fileDescriptor[i] = fileManager.Open(&stringStorage)
            endIf
-          -- ########## NEW CODE ##########
-          holdI = i
-          break
+          -- Check to see if there was an error.
+          -- Otherwise return index of where the file was stored at
+          if pcb.fileDescriptor[i] != null
+              return i
+          else
+              return -1
+            endIf
         endIf
       endFor
 
-      open = fileManager.Open(&stringStorage)
-
-      -- 3b. Return -1 if an empty slot is not found
-      -- 4b. Return -1 if it fails opening a file
-      if open == null || holdI == -1
-          return -1
-        endIf
-
-      -- 5. Set the entry point at the open file
-      --pcb.fileDescriptor[holdI] = open
-      pcb.fileDescriptor[i].kind = FILE
-
-      -- 6. Return index of the file descriptr array
-      return holdI
+      -- Catch all for any other errors
+      return -1
 
     endFunction
 -----------------------------  Handle_Sys_Read  ---------------------------------
@@ -2254,6 +2242,11 @@ endFunction
         sizeOfFile: int
         hold: bool
         destAddr: int
+        holdChar: char
+        i: int
+        in: int
+
+        in = SetInterruptsTo(ENABLED)
 
       -- Begin by checking fileDesc
       if fileDesc >= MAX_NUMBER_OF_OPEN_FILES || fileDesc < 0
@@ -2271,6 +2264,74 @@ endFunction
           return -1
         endIf
 
+      virtAddr = buffer asInteger
+      virtPage = virtAddr / PAGE_SIZE
+      offset = virtAddr % PAGE_SIZE
+      copiedSoFar = 0
+      nextPosInFile = open.currentPos
+
+      -- ############ NEW CODE ##################
+      -- If we're dealing with a 'terminal' 
+      if open.kind == TERMINAL
+          while true
+              -- Compute Size of Chunk
+              thisChunksize = PAGE_SIZE - offset
+              if copiedSoFar + thisChunksize > sizeInBytes
+                  thisChunksize = sizeInBytes - copiedSoFar
+                endIf
+
+              -- Check to see if We're done
+              if thisChunksize <= 0
+                  break
+                endIf
+
+              -- check for various errors
+              if virtPage < 0 ||  virtPage > NUMBER_OF_PHYSICAL_PAGE_FRAMES || !currentThread.myProcess.addrSpace.IsValid(virtPage) || !currentThread.myProcess.addrSpace.IsWritable(virtPage)
+                  return -1
+                endIf
+
+              --Set dirtyBit for this page
+              currentThread.myProcess.addrSpace.SetDirty(virtPage)
+              --set referencedBit for this page
+              currentThread.myProcess.addrSpace.SetReferenced(virtPage)
+
+              -- Get the destination address
+              destAddr = currentThread.myProcess.addrSpace.ExtractFrameAddr(virtPage) + offset
+
+              if destAddr == 0
+                  return copiedSoFar
+                endIf
+
+              for i = 0 to thisChunksize - 1
+                  holdChar = serialDriver.GetChar()
+                  copiedSoFar = copiedSoFar + 1
+
+                  -- Handle the special Characters and then return
+                  if holdChar == '\n' || holdChar == '\r'
+                      *(destAddr asPtrTo char + i) = '\n'
+                      return copiedSoFar
+                    endIf
+
+                  -- Handle EOF
+                  if holdChar == 0x04
+                      return copiedSoFar - 1
+                    endIf
+
+                  -- Put the character into the destination address
+                  *(destAddr asPtrTo char + i) = holdChar
+                endFor
+
+              -- Increment and repeat
+              nextPosInFile = nextPosInFile + thisChunksize
+              virtPage = virtPage + 1
+              offset = 0
+            endWhile
+          -- Incase we haven't returned already, return the count
+          return copiedSoFar
+        endIf
+      -- ############ NEW CODE ##################
+
+      -- Else we're dealing with a File, Handle as before
       virtAddr = buffer asInteger
       virtPage = virtAddr / PAGE_SIZE
       offset = virtAddr % PAGE_SIZE
@@ -2298,7 +2359,7 @@ endFunction
             endIf
 
           -- check for various errors
-          if virtPage < 0 ||  virtPage > NUMBER_OF_PHYSICAL_PAGE_FRAMES || !currentThread.myProcess.addrSpace.IsValid(virtPage) || !currentThread.myProcess.addrSpace.IsWritable(virtPage)
+          if virtPage < 0 ||  virtPage > MAX_PAGES_PER_VIRT_SPACE - 1 || !currentThread.myProcess.addrSpace.IsValid(virtPage) || !currentThread.myProcess.addrSpace.IsWritable(virtPage)
             return -1
             endIf
 
@@ -2354,6 +2415,11 @@ endFunction
         sizeOfFile: int
         hold: bool
         destAddr: int
+        i: int = 0
+        holdChar: char
+                in: int
+
+        in = SetInterruptsTo(ENABLED)
 
       -- Begin by checking fileDesc
       if fileDesc >= MAX_NUMBER_OF_OPEN_FILES || fileDesc < 0
@@ -2366,6 +2432,79 @@ endFunction
         endIf
 
       --Get the OpenFile
+      open = currentThread.myProcess.fileDescriptor[fileDesc]
+      if open == null
+          return -1
+        endIf
+
+      virtAddr = buffer asInteger
+      virtPage = virtAddr / PAGE_SIZE
+      offset = virtAddr % PAGE_SIZE
+      copiedSoFar = 0
+      nextPosInFile = open.currentPos
+
+      -- ########### NEW CODE ############
+      -- Handle the case where the file is a 'terminal'
+      if open.kind == TERMINAL
+          while true
+              -- Get the chunk size
+              thisChunksize = PAGE_SIZE - offset
+
+              if copiedSoFar + thisChunksize > sizeInBytes
+                  thisChunksize = sizeInBytes - copiedSoFar
+                endIf
+
+              -- Check to see if we're done
+              if thisChunksize <= 0
+                  break
+                endIf
+
+              -- check for various errors
+              if virtPage < 0 ||  virtPage > NUMBER_OF_PHYSICAL_PAGE_FRAMES  || !currentThread.myProcess.addrSpace.IsValid(virtPage) || !currentThread.myProcess.addrSpace.IsWritable(virtPage)
+                  return -1
+                endIf
+
+              -- Set referenced bit
+              currentThread.myProcess.addrSpace.SetReferenced(virtPage)
+
+              -- Calculate frame address
+              destAddr = currentThread.myProcess.addrSpace.ExtractFrameAddr(virtPage) + offset
+
+              if destAddr == 0
+                  return copiedSoFar
+                endIf
+
+              for i = 0 to thisChunksize - 1
+                  -- Acquire the character from the destination address
+                  holdChar = *(destAddr asPtrTo char + i)
+
+                  -- Check to see if the character is EOF, if so return immediately
+                  if holdChar == 0x04
+                      return copiedSoFar
+                    endIf
+                  -- Replace \n with \r
+                  if holdChar == '\n'
+                      serialDriver.PutChar('\r')
+                    endIf
+                  -- Place the character on Put Buffer
+                  serialDriver.PutChar(holdChar)
+
+                  -- Increment counter
+                  copiedSoFar = copiedSoFar + 1
+                endFor
+              -- Increment and repeat
+              nextPosInFile = nextPosInFile + thisChunksize
+              virtPage = virtPage + 1
+              offset = 0
+
+            endWhile
+          -- Incase we haven't returned the count already
+          return copiedSoFar
+      endIf
+      -- ############ NEW CODE ##################
+
+
+      --Handle the File case as before
       open = currentThread.myProcess.fileDescriptor[fileDesc]
       if open == null
           return -1
@@ -2453,9 +2592,15 @@ endFunction
         pcb: ptr to ProcessControlBlock
         open: ptr to OpenFile
 
-
       -- 0. Initilize
       pcb = currentThread.myProcess
+
+      -- ######### NEW CODE ##########
+      -- If we're trying to seek a Terminal File, return -1
+      if pcb.fileDescriptor[fileDesc].kind == TERMINAL
+          return -1
+        endIf
+      -- ######### NEW CODE ##########
 
       -- 1. Lock the FileManager
       fileManager.fileManagerLock.Lock()
@@ -2511,7 +2656,14 @@ endFunction
       --print(".\n")
       var
         open: ptr to OpenFile
+      -- ############ NEW CODE ##################
+      -- Check to see if we're trying to close the Terminal
+      if currentThread.myProcess.fileDescriptor[fileDesc].kind == TERMINAL
 
+          currentThread.myProcess.fileDescriptor[fileDesc] = null
+          return
+        endIf
+      -- ############ NEW CODE ##################
       -- Check to see if the index passed in is valid.
       -- Can't be greater than or equal to MAX OR less than 0
       if fileDesc >= MAX_NUMBER_OF_OPEN_FILES || fileDesc < 0
@@ -2534,6 +2686,11 @@ function printString( arg: String)
     -- Helper function to print a char array string
     print(arg)
   endFunction
+
+  ---------------- serialHandlerFunction ---------------------
+  function serialHandlerFunction()
+      serialDriver.SerialHandler()
+    endFunction
 -----------------------------  ResumeChildAfterFork ------------------------
 
 function ResumeChildAfterFork(initPC: int)
@@ -2761,6 +2918,8 @@ function ResumeChildAfterFork(initPC: int)
         -- to a frame of memory. 
         --
         var i: int
+            --terminalFile: OpenFile
+
           print ("Initializing File Manager...\n")
           fileManagerLock = new Mutex
           fileManagerLock.Init ()
@@ -2799,6 +2958,10 @@ function ResumeChildAfterFork(initPC: int)
           diskDriver.SynchReadSector (0,    -- sector to read
                                       1,    -- number of sectors to read
                                       directoryFrame)
+
+         -- terminalFile = new OpenFile
+         -- terminalFile.kind = TERMINAL
+         -- serialTerminalFile = terminalFile
         endMethod
 
       ----------  FileManager . Print  ----------
@@ -3441,20 +3604,22 @@ function ResumeChildAfterFork(initPC: int)
 
         print( "Initializing Serial Driver...")
 
-        *serial_status_word_address = SERIAL_STATUS_WORD_ADDRESS
-        *serial_data_word_address = SERIAL_DATA_WORD_ADDRESS
+        serial_status_word_address = SERIAL_STATUS_WORD_ADDRESS asPtrTo int
+        serial_data_word_address = SERIAL_DATA_WORD_ADDRESS asPtrTo int
 
         serialLock = new Mutex
         serialLock.Init()
 
-        getBuffer = new array of char { SERIAL_GET_BUFFER_SIZE of ' ' }
+        -- Initialize 'Get' variables
+        getBuffer = new array of char { SERIAL_GET_BUFFER_SIZE of '\0' }
         getBufferSize = 0
         getBufferNextIn = 0
         getBufferNextOut = 0 
         getCharacterAvail = new Condition
         getCharacterAvail.Init()
 
-        putBuffer = new array of char { SERIAL_PUT_BUFFER_SIZE of ' ' }
+        -- Initialize 'Put' variables
+        putBuffer = new array of char { SERIAL_PUT_BUFFER_SIZE of '\0' }
         putBufferSize = 0
         putBufferNextIn = 0
         putBufferNextOut = 0
@@ -3463,6 +3628,10 @@ function ResumeChildAfterFork(initPC: int)
 
         serialNeedsAttention = new Semaphore
         serialNeedsAttention.Init(0)
+
+        serialHandlerThread = new Thread
+        serialHandlerThread.Init("serialHandlerThread")
+        serialHandlerThread.Fork(serialHandlerFunction, 0)
 
         serialHasBeenInitialized = true
     endMethod
@@ -3474,20 +3643,25 @@ function ResumeChildAfterFork(initPC: int)
         -- Otherwise return immediately after buffering the character
         -- This will not wait for the I/O to complete
 
+        -- If the buffer is full, then block
         putBufferSem.Down()
 
         -- Aquire SerialLock
-        serialDriver.serialLock.Unlock()
+        serialLock.Lock()
 
         -- Add character to the next "in spot"
         putBuffer[putBufferNextIn] = value
 
         --Adjust putBufferNextIn and BufferSize
-        putBufferNextIn = putBufferNextIn + 1
+        putBufferNextIn = (putBufferNextIn + 1) % SERIAL_PUT_BUFFER_SIZE
         putBufferSize = putBufferSize + 1
 
-        --Release the lock
-        serialLock.Lock()
+        -- Release SerialLock
+        serialLock.Unlock()
+
+        -- Signal 'serialNeedsAttention'
+        serialNeedsAttention.Up ()
+
     endMethod
 
     --------------------- SerialDriver . GetChar() ----------------
@@ -3497,28 +3671,29 @@ function ResumeChildAfterFork(initPC: int)
         -- user to type a character.
 
         var
-          tmpChar: char
+          holdChar: char
 
         -- Aquire SerialLock
-        serialLock.Unlock()
+        serialLock.Lock()
 
         -- if getBufferSize == 0, we must wait on getCharacterAvail
-        while getBufferSize == 0
+        if getBufferSize == 0
             getCharacterAvail.Wait(& serialLock)
-          endWhile
+          endIf
+
 
         -- Hold character before adjusting values
-        tmpChar = getBuffer[getBufferNextOut]
+        holdChar = getBuffer[getBufferNextOut]
+
         -- Adjust getBufferNextOut and getBufferSize
-        getBufferNextOut = getBufferNextOut + 1
+        getBufferNextOut = (getBufferNextOut + 1) % SERIAL_GET_BUFFER_SIZE
         getBufferSize = getBufferSize - 1
 
         -- Release SerialLock & signal serialNeedsAttention
-        serialDriver.serialLock.Lock()
-        serialDriver.serialNeedsAttention.Up ()
+        serialLock.Unlock()
 
         --Return character
-        return tmpChar
+        return holdChar
     endMethod
 
     --------------------- SerialDriver . SerialHandler() ----------
@@ -3531,9 +3706,72 @@ function ResumeChildAfterFork(initPC: int)
         -- waiting in putBuffer to be printed, the outputting must be started
         -- (3) If other threads wait on getBuffer (becoming non-empty) and putPuffer (becoming non-full)
 
+        var
+          inChar: char
+          outChar: char
+
         -- Infinite loop 
         while true
 
+          -- Wait on serialNeedsAttention
+          serialNeedsAttention.Down()
+
+          -- HANDLE INPUT STREAM
+          -- Check available bit of the device status register
+          if (*serial_status_word_address &  SERIAL_CHARACTER_AVAILABLE_BIT) == 1
+
+              -- Aquire Lock
+              serialLock.Lock()
+
+            -- Handle overflow
+            if getBufferSize >= SERIAL_GET_BUFFER_SIZE - 1
+                print("\nSerial input buffer overrun - character '")
+                printChar(inChar)
+                print ("' was ignored\n")
+            else
+                -- Get the character from serial device data register
+                inChar = *(serial_data_word_address+3) asPtrTo char
+
+                -- Add it to the next position in the get Buffer
+                getBuffer[getBufferNextIn] = inChar
+
+                -- Adjust variables
+                getBufferNextIn = (getBufferNextIn + 1) % SERIAL_PUT_BUFFER_SIZE
+                getBufferSize = getBufferSize + 1
+
+                -- Signal to getCharacterAvail
+                getCharacterAvail.Signal(&serialLock)
+              endIf
+            -- Release Lock
+            serialLock.Unlock()
+          endIf
+
+          -- HANDLE OUTPUT STREAM
+          -- Check Output Ready bit of the device status register
+          if (*serial_status_word_address & SERIAL_OUTPUT_READY_BIT) == 2
+
+              -- Aquire the Lock
+              serialLock.Lock()
+
+              -- Check Put Buffer Queue
+              if putBufferSize != 0
+                  -- Get the character from the Buffer
+                  outChar = putBuffer[putBufferNextOut]
+
+                  -- Set the device Register with the outPut character
+                  *serial_data_word_address = outChar
+
+                  -- Make Adjustments to Put Buffer Values
+                  putBufferNextOut = (putBufferNextOut + 1) % SERIAL_PUT_BUFFER_SIZE
+                  putBufferSize = putBufferSize - 1
+
+                  -- Wake up any PutChar Threads waiting to add characters to a full buffer
+                  putBufferSem.Up()
+                endIf
+
+              --Release Lock
+              serialLock.Unlock()
+          endIf
         endWhile
     endMethod
   endBehavior

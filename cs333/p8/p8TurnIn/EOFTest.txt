@@ -1,0 +1,50 @@
+Script started on Sun, Nov 30, 2014 11:21:00 PM
+
+justin@Justin ~/cs333/p8
+$ make && blitz -g os -wait -raw
+make: Nothing to be done for 'all'.
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Serial Driver...Initializing Disk Driver...
+Initializing File Manager...
+Opening 'stdin' and 'stdout'...
+Okay.
+Okay.
+This menu works best in raw mode.
+
+====================  MENU  ====================
+  1  -  BasicSerialTest
+  2  -  KeyTest
+  3  -  EchoTest
+  4  -  LineEchoTest
+  5  -  EOFTest
+  6  -  OpenCloseTerminalTest
+  7  -  TerminalErrorTest
+  8  -  Shell
+  9  -  Quit
+Please select by number: 5
+
+==========  EOFTest  ==========
+
+This test should be run in 'raw' mode.
+
+This function tests the handling of control-D.  Control-D is the
+enf-of-file character.  When typed, it should cause an immediate
+return from the Read syscall.  If no other characters have been
+typed first, then the count returned from Read will be zero, which
+many programs will interpret as 'end-of-file'.
+
+Please hit control-D next.  The ENTER key should not be necessary...
+Okay.
+Please type "abc" followed by control-D.  The ENTER key should not be necessary...
+Okay.
+
+==========  Test Complete  ==========
+
+justin@Justin ~/cs333/p8
+$ exit
+Script done on Sun, Nov 30, 2014 11:21:34 PM

@@ -1,0 +1,94 @@
+Script started on Mon, Dec  1, 2014  6:55:35 PM
+
+justin@Justin ~/cs333/p8
+$ blitz -g os -wait
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Serial Driver...Initializing Disk Driver...
+Initializing File Manager...
+Opening 'stdin' and 'stdout'...
+Okay.
+Okay.
+This menu works best in raw mode.
+
+====================  MENU  ====================
+  1  -  BasicSerialTest
+  2  -  KeyTest
+  3  -  EchoTest
+  4  -  LineEchoTest
+  5  -  EOFTest
+  6  -  OpenCloseTerminalTest
+  7  -  TerminalErrorTest
+  8  -  Shell
+  9  -  Quit
+Please select by number: 
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+3
+
+==========  EchoTest  ==========
+
+This test reads characters from the terminal.  It echoes each character, as it is received.
+
+  1. Start by typing "abc\n"
+  2. See what happens with characters like cntl-H (Backspace), cntl-J (NL) and cntl-M (CR).
+  3. See what happens when you hit keys labelled SPACE, ENTER/RETURN, TAB, DEL/BACKSPACE, and ESC.
+  4. See what happens when you hit cntl-D (EOF).
+  5. Try this test in cooked mode and in raw mode.
+  6. While in raw mode, see what happens with sequences from page 342 in the textbook.
+     For example, try typing these sequences:
+         ESC  [  7  m
+         ESC  [  5  A
+         control-g
+         up-arrow
+
+This test will terminate when 'q' is typed.
+
+(To change to cooked mode, type control-C, "cooked", and "g" to resume execution.
+To change to raw mode, type control-C, ENTER, ENTER, "raw", and "g" to resume execution.)
+
+
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+abc
+abc
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+hello there^H^H^H^H^Hall
+hello allre
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+hello all
+hello all
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+^D
+*****  EOF on input ignored: Use Control-C to halt execution  *****
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+^D 
+ 
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+
+
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+
+
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+
+
+
+*****  Execution suspended on 'wait' instruction; waiting for additional user input  *****
+
+==========  Test Complete  ========== 
+
+justin@Justin ~/cs333/p8
+$ exit
+
+Script done on Mon, Dec  1, 2014  6:57:21 PM

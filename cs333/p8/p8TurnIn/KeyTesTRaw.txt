@@ -1,0 +1,80 @@
+Script started on Sun, Nov 30, 2014 11:30:34 PM
+
+justin@Justin ~/cs333/p8
+$ make && blitz -g os -wait -raw
+make: Nothing to be done for 'all'.
+Beginning execution...
+====================  KPL PROGRAM STARTING  ====================
+Initializing Thread Scheduler...
+Initializing Thread Manager...
+Initializing Frame Manager...
+AllocateRandomFrames called.  NUMBER_OF_PHYSICAL_PAGE_FRAMES = 512
+Initializing Serial Driver...Initializing Disk Driver...
+Initializing File Manager...
+Opening 'stdin' and 'stdout'...
+Okay.
+Okay.
+This menu works best in raw mode.
+
+====================  MENU  ====================
+  1  -  BasicSerialTest
+  2  -  KeyTest
+  3  -  EchoTest
+  4  -  LineEchoTest
+  5  -  EOFTest
+  6  -  OpenCloseTerminalTest
+  7  -  TerminalErrorTest
+  8  -  Shell
+  9  -  Quit
+Please select by number: 2
+
+==========  KeyTest  ==========
+
+This test waits for a single character and then prints the value of that character.
+
+  1. Start by typing "abcABC123"
+  2. See what happens with characters like cntl-H (Backspace), cntl-J (NL) and cntl-M (CR).
+  3. See what happens when you hit keys labelled SPACE, ENTER/RETURN, TAB, DEL/BACKSPACE, ARROW KEYS and ESC.
+  4. See what happens when you hit cntl-D (EOF).
+  5. Try this test in cooked mode and in raw mode.
+
+This test will terminate when 'q' is typed.
+
+(To change to cooked mode, type control-C, "cooked", and "g" to resume execution.
+To change to raw mode, type control-C, ENTER, ENTER, "raw", and "g" to resume execution.)
+
+ch = 0x00000061 (decimal 97)
+ch = 0x00000062 (decimal 98)
+ch = 0x00000063 (decimal 99)
+ch = 0x00000041 (decimal 65)
+ch = 0x00000042 (decimal 66)
+ch = 0x00000043 (decimal 67)
+ch = 0x00000031 (decimal 49)
+ch = 0x00000032 (decimal 50)
+ch = 0x00000033 (decimal 51)
+ch = 0x00000008 (decimal 8)
+ch = 0x0000000A (decimal 10)
+ch = 0x0000000A (decimal 10)
+ch = 0x00000020 (decimal 32)
+ch = 0x0000000A (decimal 10)
+ch = 0x00000009 (decimal 9)
+ch = 0x0000007F (decimal 127)
+ch = 0x0000001B (decimal 27)
+ch = 0x0000005B (decimal 91)
+ch = 0x00000044 (decimal 68)
+ch = 0x0000001B (decimal 27)
+ch = 0x0000005B (decimal 91)
+ch = 0x00000043 (decimal 67)
+ch = 0x0000001B (decimal 27)
+
+*****  WARNING: Returned value from Read is zero; This should only occur when control-D is typed
+ch = 0x00000061 (decimal 97)
+ch = 0x00000062 (decimal 98)
+ch = 0x00000063 (decimal 99)
+ch = 0x00000071 (decimal 113)
+
+==========  Test Complete  ==========
+
+justin@Justin ~/cs333/p8
+$ exit
+Script done on Sun, Nov 30, 2014 11:31:23 PM
